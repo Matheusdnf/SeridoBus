@@ -1,50 +1,51 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { Contato } from './model/Contato';
+import { User } from './model/User';
 
 export default function App() {
 
-  const [nome, setNome] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [contatos, setContatos] = useState(new Array<Contato>());
+  const [cellphone, setCellphone] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
 
-  const addContato = () => {
-    contatos.push(new Contato(nome, email, phone));
-    setNome("");
+  const addUser = () => {
+    const newUser = new User(name, email, cellphone);
+    setUsers([...users, newUser]);
+    setName("");
     setEmail("");
-    setPhone("");
+    setCellphone("");
   }
 
-  const delContato = (email: string) => {
-    setContatos(contatos.filter(c => c.email !== email));
+  const delUser = (email: string) => {
+    setUsers(users.filter(u => u.email !== email));
   }
-  
+
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Easy Agenda</Text>
+      <Text style={styles.titulo}>Usuários do Sistema</Text>
       <View style={styles.form}>
         <Text>Nome</Text>
-        <TextInput placeholder="Digite o nome" value={nome} onChangeText={setNome}></TextInput>
+        <TextInput placeholder="Digite o nome" value={name} onChangeText={setName} />
         <Text>Email</Text>
-        <TextInput placeholder="Digite o email" value={email} onChangeText={setEmail}></TextInput>
-        <Text>Fone</Text>
-        <TextInput placeholder="Digite phone" value={phone} onChangeText={setPhone}></TextInput>
-        <Button title="Salvar" onPress={addContato}></Button>
+        <TextInput placeholder="Digite o email" value={email} onChangeText={setEmail} />
+        <Text>Telefone</Text>
+        <TextInput placeholder="Digite o telefone" value={cellphone} onChangeText={setCellphone} />
+        <Button title="Salvar" onPress={addUser} />
       </View>
       <ScrollView style={styles.list}>
-        {contatos.map((c: Contato) => (
-          <View key={c.email}>
-            <Text>Nome: {c.name}</Text>
-            <Text>Email: {c.email}</Text>
-            <Text>Phone: {c.phone}</Text>
-            <Button title="Excluir" onPress={() => delContato(c.email)} />
+        {users.map((u: User) => (
+          <View key={u.email} style={styles.card}>
+            <Text>Nome: {u.name}</Text>
+            <Text>Email: {u.email}</Text>
+            <Text>Telefone: {u.cellphone}</Text>
+            <Button title="Excluir" onPress={() => delUser(u.email)} />
           </View>
         ))}
       </ScrollView>
       <StatusBar style="auto" />
-    </View >
+    </View>
   );
 }
 
@@ -56,16 +57,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  form:{
+  form: {
     backgroundColor: '#ADD8E6',
     alignItems: "flex-start",
     justifyContent: "space-around",
     padding: 15,
+    width: "100%",
   },
   list: {
     marginTop: 10,
     backgroundColor: "#90EE90",
     padding: 15,
+    width: "100%",
+  },
+  card: {
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 5,
   },
   titulo: {
     fontSize: 25,
