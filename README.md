@@ -4,6 +4,8 @@ Sistema de listagem de estudantes que farão uso de ônibus escolar.
 
 ## Como rodar?
 
+### Criação do schema e do .env
+
 Após clonar o projeto, será necessário criar uma conta no supabase. 
 
 Depois de criar conta e projeto, copie o arquivo ```.env.example``` com o nome de ```.env```.
@@ -28,13 +30,23 @@ Dentro do dashboard do Supabase, busque por ```Project Settings > API Keys > API
 
 ![API Key](./docs/images/captura_supabase_2.png)
 
-Em seguida, baixe todas a dependências:
+### Criação das tabelas no Supabase
+
+Para criar as tabelas no Supabase, copie todo o código de [database.sql](./database.sql) e, dentro do dashboard do Supabase, abra o ```SQL Editor```, cole o código e clique em ```Run```.
+
+![alt text](./docs/images/captura_supabase_3.png)
+
+### Baixar dependências
+
+Baixe todas a dependências:
 
 ```bash
     npm install
 ```
 
-Por fim, rode o projeto:
+### Rode o projeto
+
+Por fim, rode o projeto com o comando:
 
 ```bash 
     npm start
