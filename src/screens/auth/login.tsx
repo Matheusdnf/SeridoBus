@@ -20,7 +20,7 @@ interface GeneralMessage {
   text: string;
 }
 
-const LoginScreen: React.FC = () => {
+export default function LoginScreen() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -43,24 +43,20 @@ const LoginScreen: React.FC = () => {
 
   const handlePasswordValidation = (inputPassword: string) => {
     const isValid = validatePassword(inputPassword);
-    setPasswordError(isValid); // true se inválido
+    setPasswordError(isValid);
     return isValid;
   };
 
   const handleLogin = (): void => {
-    // Valide ambos os campos ao pressionar o botão de login usando as novas funções helper
     const isEmailValid = handleEmailValidation(email);
     const isPasswordValid = handlePasswordValidation(password);
-
-    // Marque os campos como editados para mostrar feedback imediato
     setEmailEdited(true);
     setPasswordEdited(true);
 
     if (!isEmailValid && !isPasswordValid) {
-      // Simulate API call for login
+      // Simular Chamada de api
       console.log("Attempting login with:", { email, password });
       setGeneralMessage({ type: "success", text: "Login bem-sucedido!" });
-      // Em uma aplicação real, você faria uma chamada de API aqui
     } else {
       setGeneralMessage({
         type: "danger",
@@ -74,9 +70,7 @@ const LoginScreen: React.FC = () => {
       <View
         style={tw`flex-col rounded-xl shadow-lg max-w-2xl w-full bg-white overflow-hidden`}
       >
-        {/* Form Section - Now contains the image and welcome message */}
         <View style={tw`flex-1 p-6 md:p-8 rounded-xl`}>
-          {/* Moved Image and Welcome message here */}
           <View style={tw`items-center mb-6`}>
             {imageLoadError ? (
               <View
@@ -86,7 +80,7 @@ const LoginScreen: React.FC = () => {
               </View>
             ) : (
               <Image
-                source={require("../../assets/logo/logo.png")} // Confirme este caminho!
+                source={require("../../assets/logo/logo.png")}
                 style={tw`w-32 h-32 mb-2 object-contain`}
                 resizeMode="contain"
                 onError={() => setImageLoadError(true)}
@@ -97,7 +91,6 @@ const LoginScreen: React.FC = () => {
             </Text>
           </View>
 
-          {/* Flash Messages (like Bootstrap's alerts) */}
           {generalMessage.text ? (
             <View
               style={tw`p-3 mb-4 rounded ${
@@ -147,26 +140,25 @@ const LoginScreen: React.FC = () => {
                 value={email}
                 onChangeText={(text: string) => {
                   setEmail(text);
-                  setEmailEdited(true); // Marque como editado
-                  handleEmailValidation(text); // Chama a função helper que usa a validação externa
+                  setEmailEdited(true);
+                  handleEmailValidation(text);
                 }}
-                onBlur={() => handleEmailValidation(email)} // Chama a função helper
+                onBlur={() => handleEmailValidation(email)}
               />
-              {/* Real-time validation icon for email */}
-              {emailEdited &&
-                email.length > 0 && ( // Só mostra o ícone se editado e não vazio
-                  <View style={tw`p-3`}>
-                    <Icon
-                      name={emailError ? "x-circle" : "check-circle"} // 'x-circle' para erro, 'check-circle' para válido
-                      size={20}
-                      color={
-                        emailError ? tw.color("red-500") : tw.color("green-500")
-                      }
-                    />
-                  </View>
-                )}
+
+              {emailEdited && email.length > 0 && (
+                <View style={tw`p-3`}>
+                  <Icon
+                    name={emailError ? "x-circle" : "check-circle"}
+                    size={20}
+                    color={
+                      emailError ? tw.color("red-500") : tw.color("green-500")
+                    }
+                  />
+                </View>
+              )}
             </View>
-            {/* Detailed validation feedback for email */}
+
             {emailError ? (
               <Text style={tw`text-red-500 text-sm mt-1`}>{emailError}</Text>
             ) : null}
@@ -194,12 +186,12 @@ const LoginScreen: React.FC = () => {
                 value={password}
                 onChangeText={(text: string) => {
                   setPassword(text);
-                  setPasswordEdited(true); // Marque como editado
-                  handlePasswordValidation(text); // Chama a função helper que usa a validação externa
+                  setPasswordEdited(true);
+                  handlePasswordValidation(text);
                 }}
-                onBlur={() => handlePasswordValidation(password)} // Chama a função helper
+                onBlur={() => handlePasswordValidation(password)}
               />
-              {/* Toggle password visibility button */}
+
               <TouchableOpacity
                 style={tw`p-3 bg-gray-100 border-l border-gray-300`}
                 onPress={() => setShowPassword(!showPassword)}
@@ -212,22 +204,21 @@ const LoginScreen: React.FC = () => {
               </TouchableOpacity>
 
               {/* Real-time validation icon for password */}
-              {passwordEdited &&
-                password.length > 0 && ( // Só mostra o ícone se editado e não vazio
-                  <View style={tw`p-3`}>
-                    <Icon
-                      name={passwordError ? "x-circle" : "check-circle"} // 'x-circle' para erro, 'check-circle' para válido
-                      size={20}
-                      color={
-                        passwordError
-                          ? tw.color("red-500")
-                          : tw.color("green-500")
-                      }
-                    />
-                  </View>
-                )}
+              {passwordEdited && password.length > 0 && (
+                <View style={tw`p-3`}>
+                  <Icon
+                    name={passwordError ? "x-circle" : "check-circle"}
+                    size={20}
+                    color={
+                      passwordError
+                        ? tw.color("red-500")
+                        : tw.color("green-500")
+                    }
+                  />
+                </View>
+              )}
             </View>
-            {/* Detailed validation feedback for password */}
+
             {passwordError ? (
               <Text style={tw`text-red-500 text-sm mt-1`}>{passwordError}</Text>
             ) : null}
@@ -246,7 +237,6 @@ const LoginScreen: React.FC = () => {
             <Text style={tw`text-gray-600 mb-3`}>Ainda não tem conta?</Text>
             <TouchableOpacity
               style={tw`border border-blue-500 py-3 rounded-lg w-3/4 items-center justify-center active:bg-blue-50`}
-              // Em uma aplicação real, você navegaria para a tela de registro
               onPress={() =>
                 Alert.alert(
                   "Navegar para Cadastro",
@@ -263,6 +253,4 @@ const LoginScreen: React.FC = () => {
       </View>
     </View>
   );
-};
-
-export default LoginScreen;
+}
