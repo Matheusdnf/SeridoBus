@@ -10,32 +10,20 @@ import {
 import Icon from "react-native-vector-icons/Feather"; // Usando Feather icons
 import tw from "twrnc"; // Import twrnc
 import { TextInputMask } from "react-native-masked-text";
-
-// Funções de validação diretamente no componente:
-const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-const validatePassword = (password: string): boolean => {
-  return password.length >= 6;
-};
-
-const validatePhone = (phone: string): boolean => {
-  const phoneRegex = /^(?:\(?[1-9]{2}\)?\s?)?(?:9\d{4}|\d{4})-?\d{4}$/;
-  return phoneRegex.test(phone);
-};
-
-const validateName = (name: string): boolean => {
-  return name.trim().length >= 3;
-};
+import DefaultScreen from "../DefaultScreen";
+import {
+  validateEmail,
+  validateName,
+  validatePassword,
+  validatePhone,
+} from "../../validations/input_validations";
 
 interface GeneralMessage {
   type: "success" | "danger" | "";
   text: string;
 }
 
-const Register: React.FC = () => {
+export default function Register() {
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -390,6 +378,4 @@ const Register: React.FC = () => {
       </View>
     </View>
   );
-};
-
-export default Register;
+}
