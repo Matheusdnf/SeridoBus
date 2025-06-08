@@ -171,20 +171,18 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
             ListHeaderComponent={() => (
               <View className="flex-row border-b border-black bg-yellow-200 p-2">
                 <Text className="w-[10%] font-bold text-center">#</Text>
-                <Text className="w-[22.5%] font-bold text-center">Nome</Text>
-                <Text className="w-[22.5%] font-bold text-center">Ação</Text>
-                <Text className="w-[22.5%] font-bold text-center">Instituição</Text>
-                <Text className="w-[22.5%] font-bold text-center">Situação</Text>
+                <Text className="w-[30%] font-bold text-center">Nome</Text>
+                <Text className="w-[30%] font-bold text-center">Instituição</Text>
+                <Text className="w-[30%] font-bold text-center">Situação</Text>
               </View>
             )}
 
             renderItem={({ item, index }: { item: NomeItem; index: number }) => (
               <View className="flex-row border-b border-black p-2 bg-yellow-50">
                 <Text className="w-[10%] text-center">{index + 1}</Text>
-                <Text className="w-[22.5%] text-center">{item.nome}</Text>
-                <Text className="w-[22.5%] text-center">{item.acao}</Text>
-                <Text className="w-[22.5%] text-center">{item.inst}</Text>
-                <Text className="w-[22.5%] text-center capitalize">{item.sit}</Text>
+                <Text className="w-[30%] text-center">{item.nome}</Text>
+                <Text className="w-[30%] text-center">{item.inst}</Text>
+                <Text className="w-[30%] text-center capitalize">{item.sit}</Text>
               </View>
             )}
             ListEmptyComponent={<Text className="text-center text-gray-500">Nada na lista</Text>}
