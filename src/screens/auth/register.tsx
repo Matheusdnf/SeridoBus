@@ -23,7 +23,7 @@ interface GeneralMessage {
   text: string;
 }
 
-export default function Register() {
+export default function RegisterScreen() {
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
