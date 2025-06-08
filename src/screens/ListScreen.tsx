@@ -55,10 +55,26 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
       </View>
 
       <View className="p-4">
-        <View className="border border-black p-3 rounded-xl mb-4 bg-yellow-100">
-          <Text className="font-bold text-black mb-2">Quadro de avisos</Text>
+        <View className="border border-black px-3 py-2 rounded-xl mb-2 bg-yellow-100">
+          <Text className="font-bold text-black">Quadro de avisos</Text>
           <Text className="text-black">O ônibus deverá sair 20 minutos mais cedo, às 11h30.</Text>
         </View>
+        {(viewList === 'ida' || viewList === 'volta') && (
+          <View className="mb-2 px-3 py-2 border border-black rounded-xl bg-yellow-100">
+            <Text className="font-bold">Resumo:</Text>
+            <Text>Total: {listaFiltradaOrdenada.length}</Text>
+            {Object.entries(
+              listaFiltradaOrdenada.reduce((acc: Record<string, number>, item: NomeItem) => {
+                acc[item.inst] = (acc[item.inst] || 0) + 1;
+                return acc;
+              }, {})
+            ).map(([inst, count]) => (
+              <Text key={inst}>
+                {inst}: {count}
+              </Text>
+            ))}
+          </View>
+        )}
 
         <View className="flex-row gap-3 mb-4">
           <TouchableOpacity onPress={() => setViewList('add')} className={`px-3 py-2 rounded-xl bg-yellow-400 ${viewList === 'add' ? 'opacity-100' : 'opacity-70'}`}>
@@ -148,28 +164,34 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
             </TouchableOpacity>
           </View>
         ) : (
+
           <FlatList
             data={listaFiltradaOrdenada}
             keyExtractor={(_, index) => index.toString()}
             ListHeaderComponent={() => (
               <View className="flex-row border-b border-black bg-yellow-200 p-2">
-                <Text className="w-[25%] font-bold text-center">Nome</Text>
-                <Text className="w-[25%] font-bold text-center">Ação</Text>
-                <Text className="w-[25%] font-bold text-center">Instituição</Text>
-                <Text className="w-[25%] font-bold text-center">Situação</Text>
+                <Text className="w-[10%] font-bold text-center">#</Text>
+                <Text className="w-[22.5%] font-bold text-center">Nome</Text>
+                <Text className="w-[22.5%] font-bold text-center">Ação</Text>
+                <Text className="w-[22.5%] font-bold text-center">Instituição</Text>
+                <Text className="w-[22.5%] font-bold text-center">Situação</Text>
               </View>
             )}
-            renderItem={({ item }) => (
+
+            renderItem={({ item, index }: { item: NomeItem; index: number }) => (
               <View className="flex-row border-b border-black p-2 bg-yellow-50">
-                <Text className="w-[25%] text-center">{item.nome}</Text>
-                <Text className="w-[25%] text-center">{item.acao}</Text>
-                <Text className="w-[25%] text-center">{item.inst}</Text>
-                <Text className="w-[25%] text-center capitalize">{item.sit}</Text>
+                <Text className="w-[10%] text-center">{index + 1}</Text>
+                <Text className="w-[22.5%] text-center">{item.nome}</Text>
+                <Text className="w-[22.5%] text-center">{item.acao}</Text>
+                <Text className="w-[22.5%] text-center">{item.inst}</Text>
+                <Text className="w-[22.5%] text-center capitalize">{item.sit}</Text>
               </View>
             )}
             ListEmptyComponent={<Text className="text-center text-gray-500">Nada na lista</Text>}
           />
+
         )}
+        
       </View>
     </SafeAreaView>
   );
