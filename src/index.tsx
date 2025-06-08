@@ -9,7 +9,7 @@ import Request_New_Password from "./screens/auth/reset_password/request_new_pass
 import "./styles/global.css";
 import ListInstitutionScreen from "./screens/institution/List";
 import ListBusScreen from "./screens/bus/List";
-import ListUserScreen from "./screens/users/ListUserScreen";
+import ListUserScreen from "./screens/user/List";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
