@@ -223,6 +223,7 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
             borderColor: 'black',
             borderRadius: 8,
             overflow: 'hidden',
+            padding: 10
           }}
         >
           <Picker
@@ -255,22 +256,11 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
           data={filteredUsers}
           keyExtractor={(_, index) => index.toString()}
           ListHeaderComponent={() => (
-            <View
-              style={{
-                flexDirection: 'row',
-                borderBottomWidth: 1,
-                borderBottomColor: 'black',
-                backgroundColor: '#FEF3C7', // amarelo claro
-                paddingVertical: 8,
-                paddingHorizontal: 10,
-              }}
-            >
-              <Text style={{ width: '10%', fontWeight: 'bold', textAlign: 'center' }}>#</Text>
-              <Text style={{ width: '30%', fontWeight: 'bold' }}>Nome</Text>
-              <Text style={{ width: '30%', fontWeight: 'bold' }}>Email</Text>
-              <Text style={{ width: '10%', fontWeight: 'bold', textAlign: 'center' }}>Turnos</Text>
-              <Text style={{ width: '10%', fontWeight: 'bold', textAlign: 'center' }}>Situação</Text>
-              <Text style={{ width: '10%', fontWeight: 'bold', textAlign: 'center' }}>Ações</Text>
+            <View className="flex-row border-b border-black bg-yellow-200 p-2">
+              <Text className="w-[10%] font-bold text-center">#</Text>
+              <Text className="w-[30%] font-bold text-center">Nome</Text>
+              <Text className="w-[40%] font-bold text-center">Instituição</Text>
+              <Text className="w-[20%] font-bold text-center">Ações</Text>
             </View>
           )}
           renderItem={({ item, index }) => (
@@ -278,30 +268,22 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
               style={{
                 flexDirection: 'row',
                 borderBottomWidth: 1,
-                borderBottomColor: '#ddd',
+                borderBottomColor: 'black',
                 paddingVertical: 8,
                 paddingHorizontal: 10,
-                backgroundColor: index % 2 === 0 ? '#fff' : '#FEF9C3', // listras amarelo mais claro alternado
+                backgroundColor: '#FEF9C3', 
                 alignItems: 'center',
               }}
             >
-              <Text style={{ width: '10%', textAlign: 'center' }}>{index + 1}</Text>
-              <Text style={{ width: '30%' }}>{item.name}</Text>
-              <Text style={{ width: '30%' }}>{item.email}</Text>
-              <Text style={{ width: '10%', textAlign: 'center' }}>{item.shift.join(', ')}</Text>
-              <Text style={{ width: '10%', textAlign: 'center' }}>{item.situacao}</Text>
-              <View
-                style={{
-                  width: '10%',
-                  flexDirection: 'row',
-                  justifyContent: 'space-around',
-                }}
-              >
+              <Text className="w-[10%] text-center">{index + 1}</Text>
+              <Text className="w-[30%] text-center">{item.name}</Text>
+              <Text className="w-[40%] text-center">{item.situacao}</Text>
+              <View className="w-[20%] flex-row justify-center space-x-2">
                 <TouchableOpacity onPress={() => openEditModal(index)}>
-                  <Ionicons name="create-outline" size={20} color="#333" />
+                  <Ionicons name="create" size={18} color="black" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleDelete(index)}>
-                  <Ionicons name="trash-outline" size={20} color="#c00" />
+                  <Ionicons name="trash" size={18} color="black" />
                 </TouchableOpacity>
               </View>
             </View>
