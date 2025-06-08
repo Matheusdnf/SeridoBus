@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, FlatList } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Sidebar from '../components/SidebarComponent'; // ajuste o caminho se precisar
+import { Picker } from '@react-native-picker/picker';
 
 type NomeItem = {
   nome: string;
@@ -12,20 +13,24 @@ type NomeItem = {
 };
 
 export default function SeridoBusApp({ navigation }: { navigation: any }) {
+  const loggedIn = true;
+  const userName = "Marlison";
+  const userSituation = "associado";
+
   const [menuVisible, setMenuVisible] = useState(false);
   const [viewList, setViewList] = useState<'ida' | 'volta' | 'add'>('ida');
   const [names, setNames] = useState<NomeItem[]>([
     { nome: "Juan", acao: "Ida", inst: "UFRN", sit: "cadastrado" },
     { nome: "Juan", acao: "Volta", inst: "UFRN", sit: "cadastrado" },
-    { nome: "Marlison", acao: "Ida", inst: "UFRN", sit: "carona" },
-    { nome: "Marlison", acao: "Volta", inst: "UFRN", sit: "carona" },
+    { nome: "João", acao: "Ida", inst: "UFRN", sit: "carona" },
+    { nome: "João", acao: "Volta", inst: "UFRN", sit: "carona" },
     { nome: "Matheus", acao: "Ida", inst: "UFRN", sit: "associado" },
   ]);
 
-  const [name, setName] = useState('');
-  const [acao, setAcao] = useState<'Ida' | 'Volta'>('Ida');
   const [inst, setInst] = useState('');
-  const [sit, setSit] = useState<'associado' | 'cadastrado' | 'carona'>('cadastrado');
+  const [sit, setSit] = useState<'associado' | 'cadastrado' | 'carona'>('carona');
+  const [acao, setAcao] = useState<'Ida' | 'Volta' | 'Ida e volta'>('Ida');
+  const [name, setName] = useState('');
 
   const prioridade: Record<string, number> = {
     associado: 1,
@@ -33,9 +38,8 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
     carona: 3,
   };
 
-  // filtra e ordena a lista pelo acao e prioridade
   const listaFiltradaOrdenada = names
-    .filter(item => item.acao.toLowerCase() === viewList) // viewList = 'ida' ou 'volta'
+    .filter(item => item.acao.toLowerCase() === viewList)
     .sort((a, b) => prioridade[a.sit] - prioridade[b.sit]);
 
   return (
@@ -56,89 +60,87 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
           <Text className="text-black">O ônibus deverá sair 20 minutos mais cedo, às 11h30.</Text>
         </View>
 
-        {/* Botões para escolher lista Ida, Volta ou Adicionar */}
         <View className="flex-row gap-3 mb-4">
-          <TouchableOpacity
-            onPress={() => setViewList('add')}
-            className={`px-3 py-2 rounded-xl bg-yellow-400 ${viewList === 'add' ? 'opacity-100' : 'opacity-70'}`}
-          >
+          <TouchableOpacity onPress={() => setViewList('add')} className={`px-3 py-2 rounded-xl bg-yellow-400 ${viewList === 'add' ? 'opacity-100' : 'opacity-70'}`}>
             <Text className="text-black font-bold">Adicionar nome</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setViewList('ida')}
-            className={`px-3 py-2 rounded-xl bg-yellow-400 ${viewList === 'ida' ? 'opacity-100' : 'opacity-70'}`}
-          >
-            <Text className="text-black font-bold">Lsta Ida</Text>
+          <TouchableOpacity onPress={() => setViewList('ida')} className={`px-3 py-2 rounded-xl bg-yellow-400 ${viewList === 'ida' ? 'opacity-100' : 'opacity-70'}`}>
+            <Text className="text-black font-bold">Lista Ida</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setViewList('volta')}
-            className={`px-3 py-2 rounded-xl bg-yellow-400 ${viewList === 'volta' ? 'opacity-100' : 'opacity-70'}`}
-          >
+          <TouchableOpacity onPress={() => setViewList('volta')} className={`px-3 py-2 rounded-xl bg-yellow-400 ${viewList === 'volta' ? 'opacity-100' : 'opacity-70'}`}>
             <Text className="text-black font-bold">Lista Volta</Text>
           </TouchableOpacity>
         </View>
 
         {viewList === 'add' ? (
           <View className="gap-4">
-            <TextInput
-              placeholder="Nome"
-              value={name}
-              onChangeText={setName}
-              className="border border-black p-2 rounded-md"
-            />
+            {!loggedIn && (
+              <TextInput
+                placeholder="Nome"
+                value={name}
+                onChangeText={setName}
+                className="border border-black p-2 rounded-md"
+              />
+            )}
 
-            {/* Seleção de Ação: Ida ou Volta */}
-            <View className="flex-row justify-between">
-              <TouchableOpacity
-                onPress={() => setAcao('Ida')}
-                className={`flex-1 py-2 mr-2 rounded ${
-                  acao === 'Ida' ? 'bg-yellow-400' : 'bg-gray-300'
-                }`}
+            <View>
+              <Picker
+                selectedValue={inst}
+                onValueChange={(itemValue) => setInst(itemValue)}
+                style={{
+                  height: 50,
+                  color: inst ? 'black' : 'gray',
+                }}
+                dropdownIconColor="black"
+                className="border border-black rounded-md bg-white px-3"
               >
-                <Text className="text-center font-bold">Ida</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setAcao('Volta')}
-                className={`flex-1 py-2 rounded ${
-                  acao === 'Volta' ? 'bg-yellow-400' : 'bg-gray-300'
-                }`}
-              >
-                <Text className="text-center font-bold">Volta</Text>
-              </TouchableOpacity>
+                <Picker.Item label="Selecione a instituição" value="" enabled={false} />
+                <Picker.Item label="UFRN" value="UFRN" />
+                <Picker.Item label="IFRN" value="IFRN" />
+                <Picker.Item label="FCST" value="FCST" />
+                <Picker.Item label="UERN" value="UERN" />
+                <Picker.Item label="UNP" value="UNP" />
+                <Picker.Item label="Centro" value="Centro" />
+              </Picker>
             </View>
 
-            <TextInput
-              placeholder="Instituição"
-              value={inst}
-              onChangeText={setInst}
-              className="border border-black p-2 rounded-md"
-            />
 
-            {/* Seleção de Situação */}
+
+            {/* Seleção: Ida, Volta ou ambos */}
             <View className="flex-row justify-between">
-              {(['associado', 'cadastrado', 'carona'] as const).map((status) => (
+              {(['Ida', 'Volta', 'Ida e volta'] as const).map((opcao) => (
                 <TouchableOpacity
-                  key={status}
-                  onPress={() => setSit(status)}
-                  className={`flex-1 py-2 mx-1 rounded ${
-                    sit === status ? 'bg-yellow-400' : 'bg-gray-300'
-                  }`}
+                  key={opcao}
+                  onPress={() => setAcao(opcao)}
+                  className={`flex-1 py-2 mx-1 rounded ${acao === opcao ? 'bg-yellow-400' : 'bg-gray-300'}`}
                 >
-                  <Text className="text-center font-bold capitalize">{status}</Text>
+                  <Text className="text-center font-bold">{opcao}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
+
             <TouchableOpacity
               onPress={() => {
-                if (name.trim()) {
-                  setNames([...names, { nome: name.trim(), acao, inst: inst.trim() || '-', sit }]);
-                  setName('');
-                  setAcao('Ida');
-                  setInst('');
-                  setSit('cadastrado');
-                  setViewList('ida');
+                const finalNome = loggedIn ? userName : name.trim();
+                const finalSit = loggedIn ? userSituation : sit;
+                if (!finalNome || !inst.trim()) return;
+
+                const novos: NomeItem[] = [];
+
+                if (acao === 'Ida' || acao === 'Ida e volta') {
+                  novos.push({ nome: finalNome, acao: 'Ida', inst: inst.trim(), sit: finalSit });
                 }
+                if (acao === 'Volta' || acao === 'Ida e volta') {
+                  novos.push({ nome: finalNome, acao: 'Volta', inst: inst.trim(), sit: finalSit });
+                }
+
+                setNames([...names, ...novos]);
+                setName('');
+                setInst('');
+                setSit('cadastrado');
+                setAcao('Ida');
+                setViewList('ida');
               }}
               className="bg-yellow-400 p-3 rounded-xl items-center"
             >
