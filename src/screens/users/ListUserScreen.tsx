@@ -8,7 +8,7 @@ import {
   Modal,
   Pressable,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // IMPORT CORRETO DO PICKER
+import { Picker } from '@react-native-picker/picker'; 
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Sidebar from '../../components/SidebarComponent';
@@ -20,6 +20,7 @@ type UserItem = {
   name: string;
   email: string;
   cellphone?: string;
+  pin?: string
   shift: ShiftEnum[];
   situacao: SituacaoEnum;
 };
@@ -69,12 +70,14 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
       name: 'João Silva',
       email: 'joao@email.com',
       shift: ['Manhã', 'Tarde'],
+      cellphone: '9999-9999',
       situacao: 'associado',
     },
     {
       name: 'Maria Oliveira',
       email: 'maria@email.com',
       shift: ['Noite'],
+      pin: 'abcd',
       situacao: 'cadastrado',
     },
   ]);
@@ -82,6 +85,7 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [cellphone, setCellphone] = useState('');
+  const [pin, setPin] = useState('');
   const [shift, setShift] = useState<ShiftEnum[]>([]);
   const [situacao, setSituacao] = useState<SituacaoEnum>('associado');
   const [searchText, setSearchText] = useState('');
@@ -108,6 +112,7 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
       name: name.trim(),
       email: email.trim().toLowerCase(),
       cellphone: cellphone.trim() || undefined,
+      pin: pin.trim() || undefined,
       shift,
       situacao,
     };
@@ -115,6 +120,7 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
     setName('');
     setEmail('');
     setCellphone('');
+    setPin('');
     setShift([]);
     setSituacao('associado');
   };
@@ -124,6 +130,7 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
     setName(user.name);
     setEmail(user.email);
     setCellphone(user.cellphone || '');
+    setPin(user.pin || "");
     setShift(user.shift);
     setSituacao(user.situacao);
     setEditIndex(index);
@@ -141,6 +148,7 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
       name: name.trim(),
       email: email.trim().toLowerCase(),
       cellphone: cellphone.trim() || undefined,
+      pin: pin.trim() || undefined,
       shift,
       situacao,
     };
@@ -153,6 +161,7 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
     setName('');
     setEmail('');
     setCellphone('');
+    setPin('');
     setShift([]);
     setSituacao('associado');
   };
@@ -204,6 +213,13 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
           value={cellphone}
           onChangeText={setCellphone}
           keyboardType="phone-pad"
+        />
+
+        <TextInput
+          className="border border-black rounded-lg p-2 mb-2"
+          placeholder="PIN (opcional)"
+          value={pin}
+          onChangeText={setPin}
         />
 
         <Text className="font-bold mt-2 mb-1">Turno (selecione um ou mais):</Text>
@@ -331,6 +347,13 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
               value={cellphone}
               onChangeText={setCellphone}
               keyboardType="phone-pad"
+            />
+
+            <TextInput
+              className="border border-black rounded-lg p-2 mb-2"
+              placeholder="PIN (opcional)"
+              value={pin}
+              onChangeText={setPin}
             />
 
             <Text className="font-bold mt-2 mb-1">Turno (selecione um ou mais):</Text>
