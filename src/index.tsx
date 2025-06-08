@@ -9,6 +9,7 @@ import Request_New_Password from "./screens/auth/reset_password/request_new_pass
 import "./styles/global.css";
 import ListInstitutionScreen from "./screens/institution/List";
 import ListBusScreen from "./screens/bus/List";
+import ListUserScreen from "./screens/users/ListUserScreen";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
         <Stack.Screen name="ListInstitution" component={ListInstitutionScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="RequestNewPassword" component={Request_New_Password} />
         <Stack.Screen name="NewPassword" component={New_Password} />
+        <Stack.Screen name="ListUsers" component={ListUserScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
