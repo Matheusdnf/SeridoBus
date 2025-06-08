@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ListScreen from "./screens/ListScreen";
 import LoginScreen from "./screens/auth/login";
 import RegisterScreen from "./screens/auth/register";
-import DefaultScreen from "./screens/DefaultScreen";
 import New_Password from "./screens/auth/reset_password/new_password";
 import Request_New_Password from "./screens/auth/reset_password/request_new_password";
 import "./styles/global.css";
@@ -17,7 +16,6 @@ export default function App() {
         <Stack.Screen name="List" component={ListScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Default" component={DefaultScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
