@@ -15,6 +15,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 // Define seu tipo de rotas da stack aqui:
 type RootStackParamList = {
   Login: undefined;
+  List: undefined;
   ListBus: undefined;
   ListInstitution: undefined;
   ListUsers: undefined;
@@ -56,6 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ visible, onClose }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.menuItems}>
+            <Text style={styles.item} onPress={() => navigation.replace('List')}>Lista</Text>
             <Text style={styles.item} onPress={() => navigation.replace('ListBus')}>Ônibus</Text>
             <Text style={styles.item} onPress={() => navigation.replace('ListInstitution')}>Instituições</Text>
             <Text style={styles.item} onPress={() => navigation.replace('ListUsers')}>Usuários</Text>
