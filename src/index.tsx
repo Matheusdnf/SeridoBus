@@ -21,8 +21,8 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="ListBus" component={ListBusScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="ListInstitution" component={ListInstitutionScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="RequestNewPassword" component={Request_New_Password} />
-        <Stack.Screen name="NewPassword" component={New_Password} />
+        <Stack.Screen name="SolicitarNovaSenha" component={Request_New_Password} />
+        <Stack.Screen name="NovaSenha" component={New_Password} />
         <Stack.Screen name="ListUsers" component={ListUserScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>

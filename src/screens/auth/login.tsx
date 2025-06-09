@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }: any) {
 
   const handleEmailValidation = (inputEmail: string) => {
     const isNotValid = validateEmail(inputEmail);
-    setEmailError(isNotValid); 
+    setEmailError(isNotValid);
     return isNotValid;
   };
 
@@ -94,18 +94,16 @@ export default function LoginScreen({ navigation }: any) {
 
           {generalMessage.text ? (
             <View
-              style={tw`p-3 mb-2 rounded ${
-                generalMessage.type === "success"
+              style={tw`p-3 mb-2 rounded ${generalMessage.type === "success"
                   ? "bg-green-100 border border-green-400"
                   : "bg-red-100 border border-red-400"
-              }`}
+                }`}
             >
               <Text
-                style={tw`${
-                  generalMessage.type === "success"
+                style={tw`${generalMessage.type === "success"
                     ? "text-green-700"
                     : "text-red-700"
-                } font-semibold`}
+                  } font-semibold`}
               >
                 {generalMessage.text}
               </Text>
@@ -124,11 +122,10 @@ export default function LoginScreen({ navigation }: any) {
               Email
             </Text>
             <View
-              style={tw`flex-row items-center border rounded-lg overflow-hidden ${
-                emailError
+              style={tw`flex-row items-center border rounded-lg overflow-hidden ${emailError
                   ? "border-red-500"
                   : "border-gray-300 focus-within:border-blue-500"
-              }`}
+                }`}
             >
               <View style={tw`p-3 bg-gray-100 border-r border-gray-300`}>
                 <Icon name="mail" size={20} color="#6B7280" />
@@ -171,11 +168,10 @@ export default function LoginScreen({ navigation }: any) {
               Senha
             </Text>
             <View
-              style={tw`flex-row items-center border rounded-lg overflow-hidden ${
-                passwordError
+              style={tw`flex-row items-center border rounded-lg overflow-hidden ${passwordError
                   ? "border-red-500"
                   : "border-gray-300 focus-within:border-blue-500"
-              }`}
+                }`}
             >
               <View style={tw`p-3 bg-gray-100 border-r border-gray-300`}>
                 <Icon name="lock" size={20} color="#6B7280" />
@@ -225,6 +221,15 @@ export default function LoginScreen({ navigation }: any) {
             ) : null}
           </View>
 
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("SolicitarNovaSenha") 
+            }
+          >
+            <Text style={tw`text-yellow-600 text-base font-semibold`}>
+              Esqueci minha senha
+            </Text>
+          </TouchableOpacity>
           {/* Login Button */}
           <TouchableOpacity
             style={tw`bg-yellow-400 py-2 rounded-lg w-full items-center justify-center shadow-md active:bg-yellow-500`}
@@ -245,7 +250,7 @@ export default function LoginScreen({ navigation }: any) {
               <Text style={tw`text-yellow-600 text-base font-semibold`}>
                 Cadastre-se agora
               </Text>
-            </TouchableOpacity> 
+            </TouchableOpacity>
           </View>
         </View>
       </View>
