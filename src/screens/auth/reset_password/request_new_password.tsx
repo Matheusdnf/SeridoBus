@@ -54,12 +54,6 @@ export default function Request_New_Password() {
         contentContainerStyle={tw`flex-1 justify-center items-center px-4`}
       >
         <View style={tw`bg-white p-6 rounded-2xl shadow w-full max-w-md`}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={tw`absolute top-4 left-4 p-2`}
-          >
-            <Icon name="arrow-left" size={24} color="#6B7280" />
-          </TouchableOpacity>
 
           <Text style={tw`text-2xl font-bold text-center mb-2`}>
             Redefinição de senha
@@ -89,12 +83,10 @@ export default function Request_New_Password() {
           </View>
 
           <TouchableOpacity
-            style={tw`bg-indigo-600 p-3 rounded`}
+            style={tw`bg-yellow-400 py-2 rounded-lg w-full items-center justify-center shadow-md active:bg-yellow-500`}
             onPress={handleSubmit}
           >
-            <Text style={tw`text-white text-center font-medium`}>
-              Confirmar
-            </Text>
+            <Text style={tw`text-black text-lg font-bold`}>Confirmar</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

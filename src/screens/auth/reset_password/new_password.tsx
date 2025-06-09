@@ -74,15 +74,8 @@ export default function New_Password() {
       <ScrollView
         contentContainerStyle={tw`flex-1 justify-center items-center px-4`}
       >
-        <View style={tw`bg-white p-6 rounded-xl w-full max-w-md shadow`}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={tw`mb-4`}
-          >
-            <Text style={tw`text-indigo-500`}>← Voltar</Text>
-          </TouchableOpacity>
-
-          <Text style={tw`text-2xl font-bold text-center text-indigo-600 mb-2`}>
+        <View style={tw`bg-white px-3 py-5 rounded-xl w-full max-w-md shadow`}>
+          <Text style={tw`text-2xl font-bold text-center text-yellow-600 mb-2`}>
             Nova Senha
           </Text>
           <Text style={tw`text-sm text-center text-gray-500 mb-6`}>
@@ -173,12 +166,10 @@ export default function New_Password() {
           </View>
 
           <TouchableOpacity
+            style={tw`bg-yellow-400 py-2 rounded-lg w-full items-center justify-center shadow-md active:bg-yellow-500`}
             onPress={enviarNovaSenha}
-            style={tw`bg-indigo-600 p-3 rounded mt-2`}
           >
-            <Text style={tw`text-white text-center font-medium`}>
-              Confirmar
-            </Text>
+            <Text style={tw`text-black text-lg font-bold`}>Confirmar</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
