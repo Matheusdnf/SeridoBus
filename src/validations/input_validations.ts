@@ -5,14 +5,14 @@ export const validateEmail = (Email: string): boolean => {
 };
 
 export const validatePassword = (Password: string): boolean => {
-  return Password.length < 5;
+  return Password.length < 6;
 };
 
 export const validateName = (Name: String): boolean => {
-  return Name.length < 7;
+  return Name.length < 3;
 };
 
 export const validatePhone = (phone: string): boolean => {
   const phoneRegex = /^(?:\(?[1-9]{2}\)?\s?)?(?:9\d{4}|\d{4})-?\d{4}$/;
-  return phoneRegex.test(phone);
+  return !phoneRegex.test(phone);
 };
