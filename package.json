@@ -6,9 +6,12 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test": "jest"
   },
   "dependencies": {
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
     "@expo/metro-runtime": "~5.0.4",
     "@react-native-picker/picker": "^2.11.0",
     "@react-navigation/native": "^7.1.10",
@@ -35,13 +38,20 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
+    "@types/jest": "^30.0.0",
+    "@types/mocha": "^10.0.10",
     "@types/react": "~19.0.10",
     "@types/react-native-vector-icons": "^6.4.18",
     "autoprefixer": "^10.4.21",
+    "babel-jest": "^30.0.2",
+    "dotenv": "^16.5.0",
+    "jest": "^30.0.2",
     "babel-preset-expo": "^13.2.0",
     "metro-react-native-babel-preset": "^0.77.0",
+    "react-native-dotenv": "^3.4.11",
     "postcss": "^8.5.4",
     "tailwindcss": "^3.4.17",
+    "react-test-renderer": "19.0.0",
     "typescript": "~5.8.3"
   },
   "private": true
