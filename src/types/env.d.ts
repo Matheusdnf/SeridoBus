@@ -1,4 +1,3 @@
-// env.d.ts
 
 declare module "@env" {
   export const SUPABASE_URL: string;
