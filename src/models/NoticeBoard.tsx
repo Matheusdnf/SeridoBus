@@ -3,6 +3,6 @@ export class NoticeBoard {
   constructor(
     public id: number,
     public notice: string,
-    public user_id: number | null
+    public user_id: number
   ) {}
 }

@@ -4,6 +4,6 @@ export class Bus {
     public id: number,
     public name: string,
     public maxCapacity: number,
-    public color?: string
+    public color: string
   ) {}
 }
