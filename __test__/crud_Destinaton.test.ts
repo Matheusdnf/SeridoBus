@@ -1,20 +1,20 @@
-import InstitutionService from "../src/services/services_intitution";
-import { Institution } from "../src/models/Institution";
+import DestinationService from "../src/services/services_Destination";
+import { Destination } from "../src/models/Destination";
 import { expect, test } from "@jest/globals";
 
-test("UpdateInstitution: deve atualizar uma instituição existente", async () => {
+test("UpdateDestination: deve atualizar uma instituição existente", async () => {
   try {
-    const instituicaoNova = new Institution(0, "Instituição Original");
-    const resultadoCadastro = await InstitutionService.RegisterInstitution(
+    const instituicaoNova = new Destination(0, "Instituição Original");
+    const resultadoCadastro = await DestinationService.RegisterDestination(
       instituicaoNova
     );
 
-    const instituicaoAtualizada = new Institution(
+    const instituicaoAtualizada = new Destination(
       resultadoCadastro.id,
       "Instituição Atualizada"
     );
 
-    const resultadoAtualizacao = await InstitutionService.EditInstitutions(
+    const resultadoAtualizacao = await DestinationService.EditDestinations(
       instituicaoAtualizada
     );
 
