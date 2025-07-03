@@ -12,23 +12,23 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Sidebar from "../../components/SidebarComponent";
-import { Institution } from "../../models/Institution";
-import InstitutionService from "../../services/services_intitution";
+import { Destination } from "../../models/Destination";
+import DestinationService from "../../services/services_Destination";
 import CustomAlert from "../../components/alert";
 
-export default function ListInstitutionScreen({
+export default function ListDestinationScreen({
   navigation,
 }: {
   navigation: any;
 }) {
   const [menuVisible, setMenuVisible] = useState(false);
-  const [data, setData] = useState<Institution[]>([]);
+  const [data, setData] = useState<Destination[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [institutionName, setInstitutionName] = useState("");
+  const [DestinationName, setDestinationName] = useState("");
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [editingInstitution, setEditingInstitution] =
-    useState<Institution | null>(null);
+  const [editingDestination, setEditingDestination] =
+    useState<Destination | null>(null);
 
   // Estados do alerta
   const [alertVisible, setAlertVisible] = useState(false);
@@ -59,11 +59,11 @@ export default function ListInstitutionScreen({
     setAlertVisible(true);
   };
 
-  const fetchInstitutions = useCallback(async () => {
+  const fetchDestinations = useCallback(async () => {
     try {
       setIsLoading(true);
-      const institutions = await InstitutionService.ListInstitutions();
-      setData(institutions);
+      const Destinations = await DestinationService.ListDestinations();
+      setData(Destinations);
     } catch (error) {
       console.error("Erro ao buscar instituições:", error);
       showAlert("Erro", "Não foi possível carregar as instituições.");
@@ -73,23 +73,23 @@ export default function ListInstitutionScreen({
   }, []);
 
   useEffect(() => {
-    fetchInstitutions();
-  }, [fetchInstitutions]);
+    fetchDestinations();
+  }, [fetchDestinations]);
 
-  const handleAddInstitution = async () => {
-    if (!institutionName.trim()) {
+  const handleAddDestination = async () => {
+    if (!DestinationName.trim()) {
       showAlert("Atenção", "O nome da instituição não pode ser vazio.");
       return;
     }
 
     try {
-      const newInstitution = new Institution(
+      const newDestination = new Destination(
         0,
-        institutionName.trim().toUpperCase()
+        DestinationName.trim().toUpperCase()
       );
-      await InstitutionService.RegisterInstitution(newInstitution);
-      setInstitutionName("");
-      await fetchInstitutions();
+      await DestinationService.RegisterDestination(newDestination);
+      setDestinationName("");
+      await fetchDestinations();
       showAlert("Sucesso", "Instituição adicionada com sucesso!");
     } catch (error) {
       console.error("Erro ao adicionar instituição:", error);
@@ -97,32 +97,32 @@ export default function ListInstitutionScreen({
     }
   };
 
-  const openEditModal = (institution: Institution) => {
-    setEditingInstitution(institution);
-    setInstitutionName(institution.name);
+  const openEditModal = (Destination: Destination) => {
+    setEditingDestination(Destination);
+    setDestinationName(Destination.name);
     setEditModalVisible(true);
   };
 
   const closeEditModal = () => {
     setEditModalVisible(false);
-    setEditingInstitution(null);
-    setInstitutionName("");
+    setEditingDestination(null);
+    setDestinationName("");
   };
 
-  const handleUpdateInstitution = async () => {
-    if (!editingInstitution || !institutionName.trim()) {
+  const handleUpdateDestination = async () => {
+    if (!editingDestination || !DestinationName.trim()) {
       showAlert("Atenção", "O nome da instituição não pode ser vazio.");
       return;
     }
 
     try {
-      const updatedInstitution = {
-        ...editingInstitution,
-        name: institutionName.trim().toUpperCase(),
+      const updatedDestination = {
+        ...editingDestination,
+        name: DestinationName.trim().toUpperCase(),
       };
-      await InstitutionService.EditInstitutions(updatedInstitution);
+      await DestinationService.EditDestinations(updatedDestination);
       closeEditModal();
-      await fetchInstitutions();
+      await fetchDestinations();
       showAlert("Sucesso", "Instituição atualizada com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar instituição:", error);
@@ -130,14 +130,14 @@ export default function ListInstitutionScreen({
     }
   };
 
-  const handleDelete = (institution: Institution) => {
+  const handleDelete = (Destination: Destination) => {
     showConfirmAlert(
       "Confirmar Exclusão",
-      `Tem certeza que deseja excluir a instituição "${institution.name}"?`,
+      `Tem certeza que deseja excluir a instituição "${Destination.name}"?`,
       async () => {
         try {
-          await InstitutionService.DeleteInstitution(institution);
-          await fetchInstitutions();
+          await DestinationService.DeleteDestination(Destination);
+          await fetchDestinations();
           showAlert("Sucesso", "Instituição excluída com sucesso!");
         } catch (error) {
           console.error("Erro ao deletar instituição:", error);
@@ -168,11 +168,11 @@ export default function ListInstitutionScreen({
         <TextInput
           className="border border-black rounded-lg p-2"
           placeholder="Nome da instituição"
-          value={institutionName}
-          onChangeText={setInstitutionName}
+          value={DestinationName}
+          onChangeText={setDestinationName}
         />
         <TouchableOpacity
-          onPress={handleAddInstitution}
+          onPress={handleAddDestination}
           className="bg-yellow-400 py-2 rounded-lg items-center"
         >
           <Text className="font-bold text-black">Adicionar instituição</Text>
@@ -227,8 +227,8 @@ export default function ListInstitutionScreen({
             <TextInput
               className="border border-black rounded-lg p-2 mb-4"
               placeholder="Instituição"
-              value={institutionName}
-              onChangeText={setInstitutionName}
+              value={DestinationName}
+              onChangeText={setDestinationName}
             />
             <View className="flex-row justify-between">
               <Pressable
@@ -239,7 +239,7 @@ export default function ListInstitutionScreen({
               </Pressable>
               <Pressable
                 className="bg-yellow-400 px-4 py-2 rounded-lg"
-                onPress={handleUpdateInstitution}
+                onPress={handleUpdateDestination}
               >
                 <Text className="text-black font-bold">Atualizar</Text>
               </Pressable>
