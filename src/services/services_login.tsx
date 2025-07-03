@@ -7,8 +7,10 @@ export default class AuthService {
       email: user.email,
       password: user.pin,
     });
+    
     if (error) throw error.message;
     return data;
+
   }
   static async SignInWithEmail(user: User) {
     const { data, error } = await supabase.auth.signInWithPassword({
