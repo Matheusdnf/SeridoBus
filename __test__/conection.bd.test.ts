@@ -13,7 +13,7 @@ test("debug: deve se conectar e capturar o erro exato da consulta", async () => 
   );
   try {
     const { data, error } = await supabase
-      .from("institution") // Nome da Tabela
+      .from("destination") // Nome da Tabela
       .select("*")
       .limit(1);
     console.log(data, error);
