@@ -10,6 +10,7 @@ export class PassengersList {
     public tripType: TripTypeEnum, // "Ida" ou "Volta"
     public shift: ShiftEnum, // "Manha", "Tarde" ou "Noite"
     public company_id: number,
-    public bus_id: number
+    public bus_id: number,
+    public destination_id:number
   ) {}
 }
