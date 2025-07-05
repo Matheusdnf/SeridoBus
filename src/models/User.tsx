@@ -2,7 +2,6 @@
 export class User {
   constructor(
     public id: number,
-    public code: number,
     public name: string,
     public email: string,
     public pin: string,
@@ -10,6 +9,7 @@ export class User {
     public adm_company: boolean = false,
     public create_company: boolean = false,
     public associate: boolean = false,
-    public cellphone: string
+    public cellphone: string,
+    public company_name?: string
   ) {}
 }
