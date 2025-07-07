@@ -2,7 +2,7 @@ import { supabase } from "../database/supabase";
 import { User } from "../models/User";
 
 export default class UserService {
-  // pega a lista de usuário
+  // lista de usuário
   static async listUsers(): Promise<User[]> {
     const { data, error } = await supabase.from("user_profile").select(`
         id,
@@ -22,13 +22,13 @@ export default class UserService {
           item.id,
           item.name,
           item.auth?.email ?? "", // email do auth.users
-          "", // senha/pin nunca vem do back-end
+          "",
           item.company_id,
           item.adm_company,
           item.create_company,
           item.associate,
           item.cellphone,
-          item.company?.name ?? "" // nome da empresa via join
+          item.company?.name ?? "" // nome da company via join
         )
     );
   }
