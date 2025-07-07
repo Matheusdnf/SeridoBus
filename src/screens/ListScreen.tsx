@@ -31,6 +31,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
   const [sit, setSit] = useState<'associado' | 'cadastrado' | 'carona'>('carona');
   const [acao, setAcao] = useState<'Ida' | 'Volta' | 'Ida e volta'>('Ida');
   const [name, setName] = useState('');
+  const [searchText, setSearchText] = useState(''); // Estado para texto da pesquisa
 
   const prioridade: Record<string, number> = {
     associado: 1,
@@ -38,8 +39,12 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
     carona: 3,
   };
 
+  // Filtra e ordena a lista com base na pesquisa e na ação
   const listaFiltradaOrdenada = names
-    .filter(item => item.acao.toLowerCase() === viewList)
+    .filter(item => 
+      item.acao.toLowerCase() === viewList && 
+      (item.nome.toLowerCase().includes(searchText.toLowerCase()) || item.inst.toLowerCase().includes(searchText.toLowerCase()))
+    )
     .sort((a, b) => prioridade[a.sit] - prioridade[b.sit]);
 
   return (
@@ -59,6 +64,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
           <Text className="font-bold text-black">Quadro de avisos</Text>
           <Text className="text-black">O ônibus deverá sair 20 minutos mais cedo, às 11h30.</Text>
         </View>
+
         {(viewList === 'ida' || viewList === 'volta') && (
           <View className="mb-2 px-3 py-2 border border-black rounded-xl bg-yellow-100">
             <Text className="font-bold">Resumo:</Text>
@@ -87,6 +93,20 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
             <Text className="text-black font-bold">Lista Volta</Text>
           </TouchableOpacity>
         </View>
+
+{/* Barra de Pesquisa */}
+{viewList !== 'add' && (
+  <View className="mb-4">
+    <TextInput
+      placeholder="Pesquisar por nome ou instituição"
+      value={searchText}
+      onChangeText={setSearchText}
+      className="border border-black p-2 rounded-md"
+      style={{ height: 40, paddingLeft: 10 }}
+    />
+  </View>
+)}
+
 
         {viewList === 'add' ? (
           <View className="gap-4">
@@ -120,8 +140,6 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
               </Picker>
             </View>
 
-
-
             {/* Seleção: Ida, Volta ou ambos */}
             <View className="flex-row justify-between">
               {(['Ida', 'Volta', 'Ida e volta'] as const).map((opcao) => (
@@ -134,7 +152,6 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
                 </TouchableOpacity>
               ))}
             </View>
-
 
             <TouchableOpacity
               onPress={() => {
@@ -164,7 +181,6 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
             </TouchableOpacity>
           </View>
         ) : (
-
           <FlatList
             data={listaFiltradaOrdenada}
             keyExtractor={(_, index) => index.toString()}
@@ -176,7 +192,6 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
                 <Text className="w-[30%] font-bold text-center">Situação</Text>
               </View>
             )}
-
             renderItem={({ item, index }: { item: NomeItem; index: number }) => (
               <View className="flex-row border-b border-black p-2 bg-yellow-50">
                 <Text className="w-[10%] text-center">{index + 1}</Text>
@@ -187,9 +202,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
             )}
             ListEmptyComponent={<Text className="text-center text-gray-500">Nada na lista</Text>}
           />
-
         )}
-        
       </View>
     </SafeAreaView>
   );
