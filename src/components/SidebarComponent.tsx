@@ -19,6 +19,8 @@ type RootStackParamList = {
   ListBus: undefined;
   ListInstitution: undefined;
   ListUsers: undefined;
+  UserProfile: undefined
+  CompanhiasList: undefined
 };
 
 type NavigationProps = StackNavigationProp<RootStackParamList>;
@@ -61,6 +63,8 @@ const Sidebar: React.FC<SidebarProps> = ({ visible, onClose }) => {
             <Text style={styles.item} onPress={() => navigation.replace('ListBus')}>Ônibus</Text>
             <Text style={styles.item} onPress={() => navigation.replace('ListInstitution')}>Instituições</Text>
             <Text style={styles.item} onPress={() => navigation.replace('ListUsers')}>Usuários</Text>
+            <Text style={styles.item} onPress={() => navigation.replace('UserProfile')}>Perfil de usuário</Text>
+            <Text style={styles.item} onPress={() => navigation.replace('CompanhiasList')}>Companhias</Text>
           </View>
         </View>
 

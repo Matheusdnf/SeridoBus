@@ -151,14 +151,17 @@ export default function ListDestinationScreen({
     <SafeAreaView className="flex-1 bg-white">
       <Sidebar visible={menuVisible} onClose={() => setMenuVisible(false)} />
 
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
-        <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons name="menu" size={28} color="black" />
-        </TouchableOpacity>
-        <Text className="text-xl font-bold text-black">SeridoBus</Text>
-        <View className="w-7" />
-      </View>
+<View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
+  <TouchableOpacity onPress={() => setMenuVisible(true)}>
+    <Ionicons name="menu" size={28} color="black" />
+  </TouchableOpacity>
+
+  <Text className="text-xl font-bold text-black">SeridoBus</Text>
+
+  <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
+    <Ionicons name="person-circle-outline" size={30} color="black" />
+  </TouchableOpacity>
+</View>
 
       <View className="p-4 space-y-4">
         {/* Formulário */}
