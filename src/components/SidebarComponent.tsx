@@ -30,12 +30,12 @@ const { width, height } = Dimensions.get('window');
 interface SidebarProps {
   visible: boolean;
   onClose: () => void;
+  isAdmin?: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ visible, onClose }) => {
+const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, isAdmin }) => {
   const slideAnim = useRef(new Animated.Value(-width)).current;
   const navigation = useNavigation<NavigationProps>();
-
   useEffect(() => {
     Animated.timing(slideAnim, {
       toValue: visible ? 0 : -width,
@@ -60,9 +60,13 @@ const Sidebar: React.FC<SidebarProps> = ({ visible, onClose }) => {
           </View>
           <View style={styles.menuItems}>
             <Text style={styles.item} onPress={() => navigation.replace('List')}>Lista</Text>
-            <Text style={styles.item} onPress={() => navigation.replace('ListBus')}>Ônibus</Text>
-            <Text style={styles.item} onPress={() => navigation.replace('ListDestination')}>Destinos</Text>
-            <Text style={styles.item} onPress={() => navigation.replace('ListUsers')}>Usuários</Text>
+            {isAdmin && (
+              <>
+                <Text style={styles.item} onPress={() => navigation.replace('ListBus')}>Ônibus</Text>
+                <Text style={styles.item} onPress={() => navigation.replace('ListDestination')}>Destinos</Text>
+                <Text style={styles.item} onPress={() => navigation.replace('ListUsers')}>Usuários</Text>
+              </>
+            )}
             <Text style={styles.item} onPress={() => navigation.replace('UserProfile')}>Perfil de usuário</Text>
             {/* <Text style={styles.item} onPress={() => navigation.replace('ListCompany')}>Companhias</Text> */}
           </View>

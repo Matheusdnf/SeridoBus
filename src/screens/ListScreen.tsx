@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+  View, Text, TextInput, TouchableOpacity,
+  FlatList, Modal, Pressable, ActivityIndicator
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Sidebar from '../components/SidebarComponent'; // ajuste o caminho se precisar
+import Sidebar from '../components/SidebarComponent';
 import { Picker } from '@react-native-picker/picker';
+import UserService from '../services/services_user';
+import DestinationService from '../services/services_Destination';
+import { User } from '../models/User';
+import { Destination } from '../models/Destination';
 
 type NomeItem = {
   nome: string;
@@ -13,25 +20,49 @@ type NomeItem = {
 };
 
 export default function SeridoBusApp({ navigation }: { navigation: any }) {
-  const loggedIn = true;
-  const userName = "Marlison";
-  const userSituation = "associado";
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [destinos, setDestinos] = useState<Destination[]>([]);
+  const [carregandoDest, setCarregandoDest] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const me = await UserService.current();
+        setCurrentUser(me);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const lista = await DestinationService.ListDestinations();
+        setDestinos(lista);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setCarregandoDest(false);
+      }
+    })();
+  }, []);
+
+  const loggedIn = !!currentUser;
+  const [sit, setSit] = useState<'associado' | 'cadastrado' | 'carona'>('carona');
+  const userName = loggedIn ? currentUser.name : '';
+  const userSituation = currentUser?.associate ? 'associado'
+    : currentUser?.adm_company ? 'cadastrado'
+      : 'carona';
 
   const [menuVisible, setMenuVisible] = useState(false);
   const [viewList, setViewList] = useState<'ida' | 'volta' | 'add'>('ida');
-  const [names, setNames] = useState<NomeItem[]>([
-    { nome: "Juan", acao: "Ida", inst: "UFRN", sit: "cadastrado" },
-    { nome: "Juan", acao: "Volta", inst: "UFRN", sit: "cadastrado" },
-    { nome: "João", acao: "Ida", inst: "UFRN", sit: "carona" },
-    { nome: "João", acao: "Volta", inst: "UFRN", sit: "carona" },
-    { nome: "Matheus", acao: "Ida", inst: "UFRN", sit: "associado" },
-  ]);
+  const [names, setNames] = useState<NomeItem[]>([]);
 
   const [inst, setInst] = useState('');
-  const [sit, setSit] = useState<'associado' | 'cadastrado' | 'carona'>('carona');
   const [acao, setAcao] = useState<'Ida' | 'Volta' | 'Ida e volta'>('Ida');
   const [name, setName] = useState('');
-  const [searchText, setSearchText] = useState(''); // Estado para texto da pesquisa
+  const [searchText, setSearchText] = useState('');
 
   const prioridade: Record<string, number> = {
     associado: 1,
@@ -39,17 +70,17 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
     carona: 3,
   };
 
-  // Filtra e ordena a lista com base na pesquisa e na ação
   const listaFiltradaOrdenada = names
     .filter(item =>
       item.acao.toLowerCase() === viewList &&
-      (item.nome.toLowerCase().includes(searchText.toLowerCase()) || item.inst.toLowerCase().includes(searchText.toLowerCase()))
+      (item.nome.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.inst.toLowerCase().includes(searchText.toLowerCase()))
     )
     .sort((a, b) => prioridade[a.sit] - prioridade[b.sit]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <Sidebar visible={menuVisible} onClose={() => setMenuVisible(false)} />
+      <Sidebar visible={menuVisible} onClose={() => setMenuVisible(false)} isAdmin={currentUser?.adm_company} />
 
       <View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
         <TouchableOpacity onPress={() => setMenuVisible(true)}>
@@ -98,7 +129,6 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
           </TouchableOpacity>
         </View>
 
-        {/* Barra de Pesquisa */}
         {viewList !== 'add' && (
           <View className="mb-4">
             <TextInput
@@ -110,7 +140,6 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
             />
           </View>
         )}
-
 
         {viewList === 'add' ? (
           <View className="gap-4">
@@ -134,17 +163,20 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
                 dropdownIconColor="black"
                 className="border border-black rounded-md bg-white px-3"
               >
-                <Picker.Item label="Selecione o destino" value="" enabled={false} />
-                <Picker.Item label="UFRN" value="UFRN" />
-                <Picker.Item label="IFRN" value="IFRN" />
-                <Picker.Item label="FCST" value="FCST" />
-                <Picker.Item label="UERN" value="UERN" />
-                <Picker.Item label="UNP" value="UNP" />
-                <Picker.Item label="Centro" value="Centro" />
+                {carregandoDest && (
+                  <Picker.Item label="Carregando destinos..." value="" enabled={false} />
+                )}
+                {!carregandoDest && (
+                  <>
+                    <Picker.Item label="Selecione o destino" value="" enabled={false} />
+                    {destinos.map((d) => (
+                      <Picker.Item key={d.id} label={d.name} value={d.name} />
+                    ))}
+                  </>
+                )}
               </Picker>
             </View>
 
-            {/* Seleção: Ida, Volta ou ambos */}
             <View className="flex-row justify-between">
               {(['Ida', 'Volta', 'Ida e volta'] as const).map((opcao) => (
                 <TouchableOpacity
@@ -164,7 +196,6 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
                 if (!finalNome || !inst.trim()) return;
 
                 const novos: NomeItem[] = [];
-
                 if (acao === 'Ida' || acao === 'Ida e volta') {
                   novos.push({ nome: finalNome, acao: 'Ida', inst: inst.trim(), sit: finalSit });
                 }
@@ -196,7 +227,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
                 <Text className="w-[30%] font-bold text-center">Situação</Text>
               </View>
             )}
-            renderItem={({ item, index }: { item: NomeItem; index: number }) => (
+            renderItem={({ item, index }) => (
               <View className="flex-row border-b border-black p-2 bg-yellow-50">
                 <Text className="w-[10%] text-center">{index + 1}</Text>
                 <Text className="w-[30%] text-center">{item.nome}</Text>
