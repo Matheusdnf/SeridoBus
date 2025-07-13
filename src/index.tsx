@@ -11,7 +11,7 @@ import ListDestinationScreen from "./screens/destination/List";
 import ListBusScreen from "./screens/bus/List";
 import ListUserScreen from "./screens/user/List";
 import UserProfileScreen from "./screens/UserProfileScreen";
-import CompanhiasScreen from "./screens/CompanhiasScreen";
+import ListCompanyScreen from "./screens/company/List";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -27,7 +27,6 @@ export default function App() {
         <Stack.Screen name="NovaSenha" component={New_Password} />
         <Stack.Screen name="ListUsers" component={ListUserScreen} options={{ headerShown: false }} />
         <Stack.Screen name="UserProfile" component={UserProfileScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="CompanhiasList" component={CompanhiasScreen} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

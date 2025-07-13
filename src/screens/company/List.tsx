@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Sidebar from '../components/SidebarComponent'; // ajuste se necessário
-import { Company } from '../models/Company'; // ajuste se necessário
+import Sidebar from '../../components/SidebarComponent'; // ajuste se necessário
+import { Company } from '../../models/Company'; // ajuste se necessário
 
 export default function CompanhiasScreen({ navigation }: { navigation: any }) {
   const [menuVisible, setMenuVisible] = useState(false);

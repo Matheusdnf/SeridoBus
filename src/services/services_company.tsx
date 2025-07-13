@@ -42,7 +42,7 @@ export default class CompanyService {
     return data[0];
   }
 
-  static async ListCompany() {
+  static async ListCompanies() {
     const { data, error } = await supabase
       .from("Company")
       .select("*")
@@ -50,4 +50,5 @@ export default class CompanyService {
     if (error) throw error;
     return data as Company[];
   }
+  
 }
