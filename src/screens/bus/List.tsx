@@ -1,119 +1,143 @@
-import React, { useState } from 'react';
+// ListBusScreen.tsx
+import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  Modal,
-  Pressable,
+  View, Text, TextInput, TouchableOpacity,
+  FlatList, Modal, Pressable, ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Sidebar from '../../components/SidebarComponent';
-
-type BusItem = {
-  bus: string;
-  color: string;
-  capacity: number;
-};
+import BusService from '../../services/services_bus';   // <= novo import
+import { Bus } from '../../models/Bus';
 
 export default function ListBusScreen({ navigation }: { navigation: any }) {
   const [menuVisible, setMenuVisible] = useState(false);
-  const [data, setData] = useState<BusItem[]>([
-    { bus: 'BRA2E19', color: 'branco', capacity: 55 },
-    { bus: 'RGH2E19', color: 'amarelo', capacity: 59 },
-  ]);
+  const [data, setData] = useState<Bus[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [bus, setBus] = useState('');
+  // campos de formulário
+  const [name, setName] = useState('');
   const [color, setColor] = useState('');
   const [capacity, setCapacity] = useState('');
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editingBus, setEditingBus] = useState<Bus | null>(null);
 
-  const handleAddBus = () => {
-    if (!bus || !color || !capacity) return;
+  // ------- CARREGAR LISTA -------
+  useEffect(() => {
+    (async () => {
+      try {
+        const buses = await BusService.ListBus();
+        setData(buses);
+        console.log('Buses loaded:', buses);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
-    const newItem: BusItem = {
-      bus: bus.trim().toUpperCase(),
-      color: color.trim().toLowerCase(),
-      capacity: parseInt(capacity),
-    };
-
-    setData((prev) => [...prev, newItem]);
-    setBus('');
-    setColor('');
-    setCapacity('');
+  // ------- ADICIONAR -------
+  const handleAddBus = async () => {
+    if (!name || !color || !capacity) return;
+    try {
+      const created = await BusService.RegisterBus({
+        name, color, maxCapacity: Number(capacity)
+      } as any);
+      setData(prev => [...prev, created]);
+      setName(''); setColor(''); setCapacity('');
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const openEditModal = (index: number) => {
-    const item = data[index];
-    setBus(item.bus);
-    setColor(item.color);
-    setCapacity(item.capacity.toString());
-    setEditIndex(index);
+  // ------- EDITAR -------
+  const openEditModal = (bus: Bus) => {
+    setName(bus.name);
+    setColor(bus.color);
+    setCapacity(String(bus.maxCapacity));
+    setEditingBus(bus);
     setEditModalVisible(true);
   };
 
-  const handleUpdateBus = () => {
-    if (editIndex === null) return;
-
-    const updatedItem: BusItem = {
-      bus: bus.trim().toUpperCase(),
-      color: color.trim().toLowerCase(),
-      capacity: parseInt(capacity),
-    };
-
-    const newData = [...data];
-    newData[editIndex] = updatedItem;
-    setData(newData);
-
-    setEditModalVisible(false);
-    setEditIndex(null);
-    setBus('');
-    setColor('');
-    setCapacity('');
-  };
-
-  const handleDelete = (index: number) => {
-    setData(data.filter((_, i) => i !== index));
-    if (editIndex === index) {
-      setEditModalVisible(false);
-      setEditIndex(null);
+  const handleUpdateBus = async () => {
+    if (!editingBus) return;
+    try {
+      const updated = await BusService.EditBus({
+        id: editingBus.id,
+        name, color,
+        maxCapacity: Number(capacity)
+      } as any);
+      setData(prev =>
+        prev.map(b => (b.id === updated.id ? updated : b))
+      );
+    } catch (err) {
+      console.error(err);
+    } finally {
+      closeModal();
     }
   };
+
+  // ------- EXCLUIR -------
+  const handleDelete = async (bus: Bus) => {
+    try {
+      await BusService.DeleteBus({ id: bus.id } as any);
+      setData(prev => prev.filter(b => b.id !== bus.id));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const closeModal = () => {
+    setEditModalVisible(false);
+    setEditingBus(null);
+    setName(''); setColor(''); setCapacity('');
+  };
+
+  if (loading) {   // spinner simples
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" />
+      </SafeAreaView>
+    );
+  }
+
+  // …continuação do ListBusScreen.tsx
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Sidebar visible={menuVisible} onClose={() => setMenuVisible(false)} />
 
-<View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
-  <TouchableOpacity onPress={() => setMenuVisible(true)}>
-    <Ionicons name="menu" size={28} color="black" />
-  </TouchableOpacity>
+      <View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
+        <TouchableOpacity onPress={() => setMenuVisible(true)}>
+          <Ionicons name="menu" size={28} color="black" />
+        </TouchableOpacity>
 
-  <Text className="text-xl font-bold text-black">SeridoBus</Text>
+        <Text className="text-xl font-bold text-black">SeridoBus</Text>
 
-  <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
-    <Ionicons name="person-circle-outline" size={30} color="black" />
-  </TouchableOpacity>
-</View>
-
+        <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
+          <Ionicons name="person-circle-outline" size={30} color="black" />
+        </TouchableOpacity>
+      </View>
 
       <View className="p-4 space-y-4">
+        {/* Formulário */}
         <Text className="text-lg font-bold text-black">Cadastrar Ônibus</Text>
+
         <TextInput
           className="border border-black rounded-lg p-2"
           placeholder="Placa do ônibus"
-          value={bus}
-          onChangeText={setBus}
+          value={name}
+          onChangeText={setName}
         />
+
         <TextInput
           className="border border-black rounded-lg p-2"
           placeholder="Cor do ônibus"
           value={color}
           onChangeText={setColor}
         />
+
         <TextInput
           className="border border-black rounded-lg p-2"
           placeholder="Capacidade"
@@ -121,6 +145,7 @@ export default function ListBusScreen({ navigation }: { navigation: any }) {
           value={capacity}
           onChangeText={setCapacity}
         />
+
         <TouchableOpacity
           onPress={handleAddBus}
           className="bg-yellow-400 py-2 rounded-lg items-center"
@@ -128,9 +153,10 @@ export default function ListBusScreen({ navigation }: { navigation: any }) {
           <Text className="font-bold text-black">Adicionar ônibus</Text>
         </TouchableOpacity>
 
+        {/* Lista */}
         <FlatList
           data={data}
-          keyExtractor={(_, index) => index.toString()}
+          keyExtractor={(item) => item.id.toString()}
           ListHeaderComponent={() => (
             <View className="flex-row border-b border-black bg-yellow-200 p-2">
               <Text className="w-[10%] font-bold text-center">#</Text>
@@ -143,35 +169,40 @@ export default function ListBusScreen({ navigation }: { navigation: any }) {
           renderItem={({ item, index }) => (
             <View className="flex-row border-b border-black p-2 bg-yellow-50">
               <Text className="w-[10%] text-center">{index + 1}</Text>
-              <Text className="w-[30%] text-center">{item.bus}</Text>
+              <Text className="w-[30%] text-center">{item.name}</Text>
               <Text className="w-[20%] text-center">{item.color}</Text>
-              <Text className="w-[20%] text-center">{item.capacity}</Text>
+              <Text className="w-[20%] text-center">{item.maxCapacity}</Text>
               <View className="w-[20%] flex-row justify-center space-x-2">
-                <TouchableOpacity onPress={() => openEditModal(index)}>
+                <TouchableOpacity onPress={() => openEditModal(item)}>
                   <Ionicons name="create" size={18} color="black" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleDelete(index)}>
+                <TouchableOpacity onPress={() => handleDelete(item)}>
                   <Ionicons name="trash" size={18} color="black" />
                 </TouchableOpacity>
               </View>
             </View>
           )}
           ListEmptyComponent={
-            <Text className="text-center text-gray-500">Nada na lista</Text>
+            <Text className="text-center text-gray-500 mt-4">
+              Nenhum ônibus cadastrado.
+            </Text>
           }
         />
       </View>
 
-      {/* Modal de Edição */}
+      {/* Modal de edição */}
       <Modal visible={editModalVisible} animationType="slide" transparent>
         <View className="flex-1 justify-center items-center bg-black/50">
           <View className="w-11/12 bg-white rounded-2xl p-6">
-            <Text className="text-xl font-bold mb-4 text-black">Editar Ônibus</Text>
+            <Text className="text-xl font-bold mb-4 text-black">
+              Editar Ônibus
+            </Text>
+
             <TextInput
               className="border border-black rounded-lg p-2 mb-2"
               placeholder="Placa"
-              value={bus}
-              onChangeText={setBus}
+              value={name}
+              onChangeText={setName}
             />
             <TextInput
               className="border border-black rounded-lg p-2 mb-2"
@@ -186,10 +217,11 @@ export default function ListBusScreen({ navigation }: { navigation: any }) {
               value={capacity}
               onChangeText={setCapacity}
             />
+
             <View className="flex-row justify-between">
               <Pressable
                 className="bg-gray-300 px-4 py-2 rounded-lg"
-                onPress={() => setEditModalVisible(false)}
+                onPress={closeModal}
               >
                 <Text className="text-black font-bold">Cancelar</Text>
               </Pressable>
