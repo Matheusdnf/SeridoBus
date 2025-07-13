@@ -7,7 +7,7 @@ import RegisterScreen from "./screens/auth/register";
 import New_Password from "./screens/auth/reset_password/new_password";
 import Request_New_Password from "./screens/auth/reset_password/request_new_password";
 import "./styles/global.css";
-import ListInstitutionScreen from "./screens/institution/List";
+import ListDestinationScreen from "./screens/destination/List";
 import ListBusScreen from "./screens/bus/List";
 import ListUserScreen from "./screens/user/List";
 import UserProfileScreen from "./screens/UserProfileScreen";
@@ -22,7 +22,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="ListBus" component={ListBusScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="ListInstitution" component={ListInstitutionScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="ListDestination" component={ListDestinationScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="SolicitarNovaSenha" component={Request_New_Password} />
         <Stack.Screen name="NovaSenha" component={New_Password} />
         <Stack.Screen name="ListUsers" component={ListUserScreen} options={{ headerShown: false }} />

@@ -17,7 +17,7 @@ type RootStackParamList = {
   Login: undefined;
   List: undefined;
   ListBus: undefined;
-  ListInstitution: undefined;
+  ListDestination: undefined;
   ListUsers: undefined;
   UserProfile: undefined
   CompanhiasList: undefined
@@ -61,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ visible, onClose }) => {
           <View style={styles.menuItems}>
             <Text style={styles.item} onPress={() => navigation.replace('List')}>Lista</Text>
             <Text style={styles.item} onPress={() => navigation.replace('ListBus')}>Ônibus</Text>
-            <Text style={styles.item} onPress={() => navigation.replace('ListInstitution')}>Instituições</Text>
+            <Text style={styles.item} onPress={() => navigation.replace('ListDestination')}>Destinos</Text>
             <Text style={styles.item} onPress={() => navigation.replace('ListUsers')}>Usuários</Text>
             <Text style={styles.item} onPress={() => navigation.replace('UserProfile')}>Perfil de usuário</Text>
             <Text style={styles.item} onPress={() => navigation.replace('CompanhiasList')}>Companhias</Text>

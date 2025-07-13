@@ -41,8 +41,8 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
 
   // Filtra e ordena a lista com base na pesquisa e na ação
   const listaFiltradaOrdenada = names
-    .filter(item => 
-      item.acao.toLowerCase() === viewList && 
+    .filter(item =>
+      item.acao.toLowerCase() === viewList &&
       (item.nome.toLowerCase().includes(searchText.toLowerCase()) || item.inst.toLowerCase().includes(searchText.toLowerCase()))
     )
     .sort((a, b) => prioridade[a.sit] - prioridade[b.sit]);
@@ -51,17 +51,17 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
     <SafeAreaView className="flex-1 bg-white">
       <Sidebar visible={menuVisible} onClose={() => setMenuVisible(false)} />
 
-<View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
-  <TouchableOpacity onPress={() => setMenuVisible(true)}>
-    <Ionicons name="menu" size={28} color="black" />
-  </TouchableOpacity>
+      <View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
+        <TouchableOpacity onPress={() => setMenuVisible(true)}>
+          <Ionicons name="menu" size={28} color="black" />
+        </TouchableOpacity>
 
-  <Text className="text-xl font-bold text-black">SeridoBus</Text>
+        <Text className="text-xl font-bold text-black">SeridoBus</Text>
 
-  <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
-    <Ionicons name="person-circle-outline" size={30} color="black" />
-  </TouchableOpacity>
-</View>
+        <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
+          <Ionicons name="person-circle-outline" size={30} color="black" />
+        </TouchableOpacity>
+      </View>
 
       <View className="p-4">
         <View className="border border-black px-3 py-2 rounded-xl mb-2 bg-yellow-100">
@@ -98,18 +98,18 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
           </TouchableOpacity>
         </View>
 
-{/* Barra de Pesquisa */}
-{viewList !== 'add' && (
-  <View className="mb-4">
-    <TextInput
-      placeholder="Pesquisar por nome ou instituição"
-      value={searchText}
-      onChangeText={setSearchText}
-      className="border border-black p-2 rounded-md"
-      style={{ height: 40, paddingLeft: 10 }}
-    />
-  </View>
-)}
+        {/* Barra de Pesquisa */}
+        {viewList !== 'add' && (
+          <View className="mb-4">
+            <TextInput
+              placeholder="Pesquisar por nome ou destino"
+              value={searchText}
+              onChangeText={setSearchText}
+              className="border border-black p-2 rounded-md"
+              style={{ height: 40, paddingLeft: 10 }}
+            />
+          </View>
+        )}
 
 
         {viewList === 'add' ? (
@@ -134,7 +134,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
                 dropdownIconColor="black"
                 className="border border-black rounded-md bg-white px-3"
               >
-                <Picker.Item label="Selecione a instituição" value="" enabled={false} />
+                <Picker.Item label="Selecione o destino" value="" enabled={false} />
                 <Picker.Item label="UFRN" value="UFRN" />
                 <Picker.Item label="IFRN" value="IFRN" />
                 <Picker.Item label="FCST" value="FCST" />
@@ -192,7 +192,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
               <View className="flex-row border-b border-black bg-yellow-200 p-2">
                 <Text className="w-[10%] font-bold text-center">#</Text>
                 <Text className="w-[30%] font-bold text-center">Nome</Text>
-                <Text className="w-[30%] font-bold text-center">Instituição</Text>
+                <Text className="w-[30%] font-bold text-center">Destino</Text>
                 <Text className="w-[30%] font-bold text-center">Situação</Text>
               </View>
             )}
