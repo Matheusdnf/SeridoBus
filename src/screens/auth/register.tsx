@@ -1,13 +1,7 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-} from "react-native";
-import Icon from "react-native-vector-icons/Feather"; // Usando Feather icons
-import tw from "twrnc"; // Import twrnc
+import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import Icon from "react-native-vector-icons/Feather";
+import tw from "twrnc";
 import { TextInputMask } from "react-native-masked-text";
 import {
   validateEmail,
@@ -15,6 +9,8 @@ import {
   validatePassword,
   validatePhone,
 } from "../../validations/input_validations";
+import AuthService from "../../services/services_login";
+import { User } from "../../models/User";
 
 interface GeneralMessage {
   type: "success" | "danger" | "";
@@ -22,32 +18,29 @@ interface GeneralMessage {
 }
 
 export default function RegisterScreen({ navigation }: any) {
-  const [email, setEmail] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  // States de erro
-  const [emailError, setEmailError] = useState<boolean>(false);
-  const [nameError, setNameError] = useState<boolean>(false);
-  const [passwordError, setPasswordError] = useState<boolean>(false);
-  const [phoneError, setPhoneError] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState(false);
+  const [nameError, setNameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
 
-  // States de edição para mostrar ícones após interação
-  const [emailEdited, setEmailEdited] = useState<boolean>(false);
-  const [nameEdited, setNameEdited] = useState<boolean>(false);
-  const [passwordEdited, setPasswordEdited] = useState<boolean>(false);
-  const [phoneEdited, setPhoneEdited] = useState<boolean>(false);
+  const [emailEdited, setEmailEdited] = useState(false);
+  const [nameEdited, setNameEdited] = useState(false);
+  const [passwordEdited, setPasswordEdited] = useState(false);
+  const [phoneEdited, setPhoneEdited] = useState(false);
 
   const [generalMessage, setGeneralMessage] = useState<GeneralMessage>({
     type: "",
     text: "",
   });
 
-  const [imageLoadError, setImageLoadError] = useState<boolean>(false);
+  const [imageLoadError, setImageLoadError] = useState(false);
 
-  // Handlers de validação que atualizam os erros
   const handleEmailValidation = (inputEmail: string) => {
     const isNotValid = validateEmail(inputEmail);
     setEmailError(isNotValid);
@@ -71,8 +64,10 @@ export default function RegisterScreen({ navigation }: any) {
     setPhoneError(isNotValid);
     return isNotValid;
   };
-
-  const handleLogin = (): void => {
+  const cleanPhoneNumber = (phone: string) => {
+    return phone.replace(/\D/g, ""); // Remove tudo que não for número
+  };
+  const handleRegister = async (): Promise<void> => {
     const isEmailValid = !handleEmailValidation(email);
     const isPasswordValid = !handlePasswordValidation(password);
     const isNameValid = !handleNameValidation(name);
@@ -84,9 +79,44 @@ export default function RegisterScreen({ navigation }: any) {
     setPhoneEdited(true);
 
     if (isEmailValid && isPasswordValid && isNameValid && isPhoneValid) {
-      console.log("Attempting login with:", { email, password, name, phone });
-      setGeneralMessage({ type: "success", text: "Login bem-sucedido!" });
-      navigation.replace("List");
+      try {
+        const cleanedPhone = cleanPhoneNumber(phone);
+        const user = new User(
+          0,
+          name,
+          email,
+          password,
+          null,
+          false,
+          false,
+          false,
+          cleanedPhone,
+          ""
+        );
+
+        console.log("Usuário antes do envio:", user);
+
+        const response = await AuthService.SignUpWithEmail(user);
+
+        console.log("Resposta do cadastro:", response);
+
+        setGeneralMessage({
+          type: "success",
+          text: "Cadastro realizado com sucesso!",
+        });
+
+        setTimeout(() => navigation.replace("Login"), 1500);
+      } catch (error: any) {
+        console.error("Erro no cadastro:", error);
+
+        setGeneralMessage({
+          type: "danger",
+          text:
+            typeof error === "string"
+              ? error
+              : error?.message || "Erro desconhecido ao cadastrar.",
+        });
+      }
     } else {
       setGeneralMessage({
         type: "danger",
@@ -97,9 +127,7 @@ export default function RegisterScreen({ navigation }: any) {
 
   return (
     <View style={tw`flex-1 justify-center items-center bg-white p-4`}>
-      <View
-        style={tw`flex-col`}
-      >
+      <View style={tw`flex-col`}>
         <View style={tw`flex-1 px-2 md:py-4 md:px-3 rounded-xl`}>
           <View style={tw`items-center mb-1`}>
             {imageLoadError ? (
@@ -123,16 +151,18 @@ export default function RegisterScreen({ navigation }: any) {
 
           {generalMessage.text ? (
             <View
-              style={tw`p-3 mb-2 rounded ${generalMessage.type === "success"
+              style={tw`p-3 mb-2 rounded ${
+                generalMessage.type === "success"
                   ? "bg-green-100 border border-green-400"
                   : "bg-red-100 border border-red-400"
-                }`}
+              }`}
             >
               <Text
-                style={tw`${generalMessage.type === "success"
+                style={tw`${
+                  generalMessage.type === "success"
                     ? "text-green-700"
                     : "text-red-700"
-                  } font-semibold`}
+                } font-semibold`}
               >
                 {generalMessage.text}
               </Text>
@@ -151,10 +181,11 @@ export default function RegisterScreen({ navigation }: any) {
               Nome
             </Text>
             <View
-              style={tw`flex-row items-center border rounded-lg overflow-hidden ${nameError
+              style={tw`flex-row items-center border rounded-lg overflow-hidden ${
+                nameError
                   ? "border-red-500"
                   : "border-gray-300 focus-within:border-blue-500"
-                }`}
+              }`}
             >
               <View style={tw`p-3 bg-gray-100 border-r border-gray-300`}>
                 <Icon name="user" size={20} color="#6B7280" />
@@ -184,11 +215,11 @@ export default function RegisterScreen({ navigation }: any) {
                 </View>
               )}
             </View>
-            {nameError ? (
+            {nameError && (
               <Text style={tw`text-red-500 text-sm mt-1`}>
                 Nome inválido. Digite ao menos 3 caracteres.
               </Text>
-            ) : null}
+            )}
           </View>
 
           {/* Campo Telefone */}
@@ -197,10 +228,11 @@ export default function RegisterScreen({ navigation }: any) {
               Telefone
             </Text>
             <View
-              style={tw`flex-row items-center border rounded-lg overflow-hidden ${phoneError
+              style={tw`flex-row items-center border rounded-lg overflow-hidden ${
+                phoneError
                   ? "border-red-500"
                   : "border-gray-300 focus-within:border-blue-500"
-                }`}
+              }`}
             >
               <View style={tw`p-3 bg-gray-100 border-r border-gray-300`}>
                 <Icon name="phone" size={20} color="#6B7280" />
@@ -235,11 +267,11 @@ export default function RegisterScreen({ navigation }: any) {
                 </View>
               )}
             </View>
-            {phoneError ? (
+            {phoneError && (
               <Text style={tw`text-red-500 text-sm mt-1`}>
                 Telefone inválido.
               </Text>
-            ) : null}
+            )}
           </View>
 
           {/* Campo Email */}
@@ -248,10 +280,11 @@ export default function RegisterScreen({ navigation }: any) {
               Email
             </Text>
             <View
-              style={tw`flex-row items-center border rounded-lg overflow-hidden ${emailError
+              style={tw`flex-row items-center border rounded-lg overflow-hidden ${
+                emailError
                   ? "border-red-500"
                   : "border-gray-300 focus-within:border-blue-500"
-                }`}
+              }`}
             >
               <View style={tw`p-3 bg-gray-100 border-r border-gray-300`}>
                 <Icon name="mail" size={20} color="#6B7280" />
@@ -281,9 +314,9 @@ export default function RegisterScreen({ navigation }: any) {
                 </View>
               )}
             </View>
-            {emailError ? (
+            {emailError && (
               <Text style={tw`text-red-500 text-sm mt-1`}>Email inválido.</Text>
-            ) : null}
+            )}
           </View>
 
           {/* Campo Senha */}
@@ -292,10 +325,11 @@ export default function RegisterScreen({ navigation }: any) {
               Senha
             </Text>
             <View
-              style={tw`flex-row items-center border rounded-lg overflow-hidden ${passwordError
+              style={tw`flex-row items-center border rounded-lg overflow-hidden ${
+                passwordError
                   ? "border-red-500"
                   : "border-gray-300 focus-within:border-blue-500"
-                }`}
+              }`}
             >
               <View style={tw`p-3 bg-gray-100 border-r border-gray-300`}>
                 <Icon name="lock" size={20} color="#6B7280" />
@@ -323,28 +357,26 @@ export default function RegisterScreen({ navigation }: any) {
                 />
               </TouchableOpacity>
             </View>
-            {passwordError ? (
+            {passwordError && (
               <Text style={tw`text-red-500 text-sm mt-1`}>
                 Senha deve ter pelo menos 6 caracteres.
               </Text>
-            ) : null}
+            )}
           </View>
 
-          {/* Botão */}
+          {/* Botão Cadastrar */}
           <TouchableOpacity
             style={tw`bg-yellow-400 py-2 rounded-lg w-full items-center justify-center shadow-md active:bg-yellow-500`}
-            onPress={handleLogin}
+            onPress={handleRegister}
           >
-            <Text style={tw`text-black text-lg font-bold`}>Entrar</Text>
+            <Text style={tw`text-black text-lg font-bold`}>Cadastrar</Text>
           </TouchableOpacity>
 
           <View style={tw`mt-2 text-center items-center`}>
             <Text style={tw`text-gray-600 mb-1`}>Já possui uma conta?</Text>
             <TouchableOpacity
               style={tw`border border-yellow-600 py-2 rounded-lg w-3/4 items-center justify-center active:bg-yellow-50`}
-              onPress={() =>
-                navigation.replace("Login")
-              }
+              onPress={() => navigation.replace("Login")}
             >
               <Text style={tw`text-yellow-600 text-base font-semibold`}>
                 Entre aqui

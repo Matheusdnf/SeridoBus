@@ -6,7 +6,6 @@ export default class AuthService {
     const { data, error } = await supabase.auth.signUp({
       email: user.email,
       password: user.pin,
-      phone: user.cellphone,
     });
 
     if (error) throw error.message;
@@ -32,10 +31,10 @@ export default class AuthService {
     return data;
   }
 
-  static async SignInWithEmail(user: User) {
+  static async SignInWithEmail({ email, pin }: { email: string; pin: string }) {
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: user.email,
-      password: user.pin,
+      email,
+      password: pin,
     });
 
     if (error) throw error.message;
@@ -56,7 +55,7 @@ export default class AuthService {
       profile = profileData;
     }
 
-    return { auth: data, profile }; // retorna login + perfil
+    return { auth: data, profile };
   }
   static async SendEmailRedefinitionPassword(email: string) {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {

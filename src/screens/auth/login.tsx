@@ -1,14 +1,8 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  Alert,
-} from "react-native";
-import Icon from "react-native-vector-icons/Feather"; // Usando Feather icons
-import tw from "twrnc"; // Import twrnc
+import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import Icon from "react-native-vector-icons/Feather";
+import tw from "twrnc";
+import AuthService from "../../services/services_login"; // Importa seu AuthService
 
 import {
   validateEmail,
@@ -47,17 +41,40 @@ export default function LoginScreen({ navigation }: any) {
     return isNotValid;
   };
 
-  const handleLogin = (): void => {
-    const isEmailValid = handleEmailValidation(email);
-    const isPasswordValid = handlePasswordValidation(password);
+  const handleLogin = async (): Promise<void> => {
+    const isEmailValid = !handleEmailValidation(email);
+    const isPasswordValid = !handlePasswordValidation(password);
     setEmailEdited(true);
     setPasswordEdited(true);
 
-    if (!isEmailValid && !isPasswordValid) {
-      // Simular Chamada de api
-      console.log("Attempting login with:", { email, password });
-      setGeneralMessage({ type: "success", text: "Login bem-sucedido!" });
-      navigation.replace("List");
+    if (isEmailValid && isPasswordValid) {
+      try {
+        // Chama o serviço de login
+        const user = {
+          email,
+          pin: password,
+        };
+
+        const response = await AuthService.SignInWithEmail(user);
+        console.log("Login response:", response);
+
+        setGeneralMessage({
+          type: "success",
+          text: "Login bem-sucedido!",
+        });
+
+        // Navega para tela principal (exemplo "List")
+        setTimeout(() => navigation.replace("List"), 1500);
+      } catch (error: any) {
+        console.error("Erro no login:", error);
+        setGeneralMessage({
+          type: "danger",
+          text:
+            typeof error === "string"
+              ? error
+              : error?.message || "Erro desconhecido ao fazer login.",
+        });
+      }
     } else {
       setGeneralMessage({
         type: "danger",
@@ -68,9 +85,7 @@ export default function LoginScreen({ navigation }: any) {
 
   return (
     <View style={tw`flex-1 justify-center items-center bg-white p-4`}>
-      <View
-        style={tw`flex-col`}
-      >
+      <View style={tw`flex-col`}>
         <View style={tw`flex-1 px-2 md:py-4 md:px-3 rounded-xl`}>
           <View style={tw`items-center mb-1`}>
             {imageLoadError ? (
@@ -94,16 +109,18 @@ export default function LoginScreen({ navigation }: any) {
 
           {generalMessage.text ? (
             <View
-              style={tw`p-3 mb-2 rounded ${generalMessage.type === "success"
+              style={tw`p-3 mb-2 rounded ${
+                generalMessage.type === "success"
                   ? "bg-green-100 border border-green-400"
                   : "bg-red-100 border border-red-400"
-                }`}
+              }`}
             >
               <Text
-                style={tw`${generalMessage.type === "success"
+                style={tw`${
+                  generalMessage.type === "success"
                     ? "text-green-700"
                     : "text-red-700"
-                  } font-semibold`}
+                } font-semibold`}
               >
                 {generalMessage.text}
               </Text>
@@ -122,10 +139,11 @@ export default function LoginScreen({ navigation }: any) {
               Email
             </Text>
             <View
-              style={tw`flex-row items-center border rounded-lg overflow-hidden ${emailError
+              style={tw`flex-row items-center border rounded-lg overflow-hidden ${
+                emailError
                   ? "border-red-500"
                   : "border-gray-300 focus-within:border-blue-500"
-                }`}
+              }`}
             >
               <View style={tw`p-3 bg-gray-100 border-r border-gray-300`}>
                 <Icon name="mail" size={20} color="#6B7280" />
@@ -158,7 +176,7 @@ export default function LoginScreen({ navigation }: any) {
             </View>
 
             {emailError ? (
-              <Text style={tw`text-red-500 text-sm mt-1`}>{emailError}</Text>
+              <Text style={tw`text-red-500 text-sm mt-1`}>Email inválido.</Text>
             ) : null}
           </View>
 
@@ -168,10 +186,11 @@ export default function LoginScreen({ navigation }: any) {
               Senha
             </Text>
             <View
-              style={tw`flex-row items-center border rounded-lg overflow-hidden ${passwordError
+              style={tw`flex-row items-center border rounded-lg overflow-hidden ${
+                passwordError
                   ? "border-red-500"
                   : "border-gray-300 focus-within:border-blue-500"
-                }`}
+              }`}
             >
               <View style={tw`p-3 bg-gray-100 border-r border-gray-300`}>
                 <Icon name="lock" size={20} color="#6B7280" />
@@ -200,8 +219,7 @@ export default function LoginScreen({ navigation }: any) {
                 />
               </TouchableOpacity>
 
-              {/* Real-time validation icon for password */}
-              {passwordEdited && password.length > 8 && (
+              {passwordEdited && password.length > 0 && (
                 <View style={tw`p-3`}>
                   <Icon
                     name={passwordError ? "x-circle" : "check-circle"}
@@ -217,22 +235,23 @@ export default function LoginScreen({ navigation }: any) {
             </View>
 
             {passwordError ? (
-              <Text style={tw`text-red-500 text-sm mt-1`}>{passwordError}</Text>
+              <Text style={tw`text-red-500 text-sm mt-1`}>
+                Senha inválida (mínimo 6 caracteres).
+              </Text>
             ) : null}
           </View>
 
           <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("SolicitarNovaSenha") 
-            }
+            onPress={() => navigation.navigate("SolicitarNovaSenha")}
           >
             <Text style={tw`text-yellow-600 text-base font-semibold`}>
               Esqueci minha senha
             </Text>
           </TouchableOpacity>
+
           {/* Login Button */}
           <TouchableOpacity
-            style={tw`bg-yellow-400 py-2 rounded-lg w-full items-center justify-center shadow-md active:bg-yellow-500`}
+            style={tw`bg-yellow-400 py-2 rounded-lg w-full items-center justify-center shadow-md active:bg-yellow-500 mt-4`}
             onPress={handleLogin}
           >
             <Text style={tw`text-black text-lg font-bold`}>Entrar</Text>
@@ -243,9 +262,7 @@ export default function LoginScreen({ navigation }: any) {
             <Text style={tw`text-gray-600 mb-1`}>Ainda não tem conta?</Text>
             <TouchableOpacity
               style={tw`border border-yellow-600 py-2 rounded-lg w-3/4 items-center justify-center active:bg-yellow-50`}
-              onPress={() =>
-                navigation.replace("Register") // Navegar para a tela de registro
-              }
+              onPress={() => navigation.replace("Register")}
             >
               <Text style={tw`text-yellow-600 text-base font-semibold`}>
                 Cadastre-se agora
