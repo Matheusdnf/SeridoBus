@@ -110,4 +110,35 @@ export default class UserService {
         )
     );
   }
+  // UserService.ts
+static async current(): Promise<User | null> {
+  // pega usuário logado
+  const { data: { session }, error: sErr } = await supabase.auth.getSession();
+  if (sErr || !session?.user) return null;
+
+  const { data, error } = await supabase
+    .from("user_profile")
+    .select(`
+      id, name, company_id, adm_company, create_company,
+      associate, cellphone, company:Company(name)
+    `)
+    .eq("id", session.user.id)   // filtro pelo id do auth
+    .single();
+
+  if (error) throw error.message;
+
+  return new User(
+    data.id,
+    data.name,
+    session.user.email ?? "",
+    "",
+    data.company_id,
+    data.adm_company,
+    data.create_company,
+    data.associate,
+    data.cellphone,
+    data.company?.[0]?.name ?? ""
+  );
+}
+
 }

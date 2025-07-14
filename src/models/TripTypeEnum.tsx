@@ -1,4 +1,4 @@
-export class TripTypeEnum {
-  Ida = "Ida";
-  Volta = "Volta";
+export enum TripTypeEnum {
+  Ida = "Ida",
+  Volta = "Volta",
 }
