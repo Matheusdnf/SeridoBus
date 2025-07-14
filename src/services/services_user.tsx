@@ -1,5 +1,6 @@
 import { supabase } from "../database/supabase";
 import { User } from "../models/User";
+import { UserAsPassenger } from "../models/UserAsPassenger";
 
 export default class UserService {
   // pega a lista de usuário
@@ -195,6 +196,7 @@ export default class UserService {
       data.company?.[0]?.name ?? ""
     );
   }
+  
   static async getUserProfile() {
     const {
       data: { user },
@@ -220,5 +222,34 @@ export default class UserService {
       email: user.email || "",
       telefone: profile.cellphone || "",
     };
+  }
+
+  static async getCurrentUser() {
+    const {
+      data: { user },
+      error: sessionError,
+    } = await supabase.auth.getUser();
+
+    if (sessionError || !user) {
+      throw new Error("Sessão inválida ou usuário não encontrado");
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from("user_profile")
+      .select("name, cellphone, adm_company, associate")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      throw new Error(profileError.message);
+    }
+
+    return {
+      name: profile.name || "",
+      email: user.email || "",
+      cellphone: profile.cellphone || "",
+      adm_company: profile.adm_company || false,
+      associate: profile.associate || false,
+    } as UserAsPassenger;
   }
 }
