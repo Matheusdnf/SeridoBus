@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Sidebar from "../components/SidebarComponent";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,14 +17,23 @@ export default function UserProfileScreen({ navigation }: { navigation: any }) {
     telefone: "",
   });
 
+  const [feedbackAlert, setFeedbackAlert] = useState({
+    visible: false,
+    title: "",
+    message: "",
+  });
+
   useEffect(() => {
     const loadProfile = async () => {
       try {
         const profile = await UserService.getUserProfile();
         setUserData(profile);
       } catch (error: any) {
-        console.error(error.message);
-        Alert.alert("Erro", error.message || "Erro ao carregar perfil");
+        setFeedbackAlert({
+          visible: true,
+          title: "Erro",
+          message: error.message || "Erro ao carregar perfil",
+        });
       }
     };
 
@@ -34,13 +43,18 @@ export default function UserProfileScreen({ navigation }: { navigation: any }) {
   const saveProfileChanges = async () => {
     try {
       await UserService.updateUserProfile(userData.nome, userData.telefone);
-      Alert.alert("Sucesso", "Dados atualizados com sucesso!");
       setEditing(false);
+      setFeedbackAlert({
+        visible: true,
+        title: "Sucesso",
+        message: "Dados atualizados com sucesso!",
+      });
     } catch (error: any) {
-      Alert.alert(
-        "Erro",
-        error.message || "Não foi possível atualizar os dados."
-      );
+      setFeedbackAlert({
+        visible: true,
+        title: "Erro",
+        message: error.message || "Não foi possível atualizar os dados.",
+      });
     }
   };
 
@@ -49,13 +63,24 @@ export default function UserProfileScreen({ navigation }: { navigation: any }) {
     try {
       await UserService.deleteUserAccount();
 
-      Alert.alert("Conta excluída", "Sua conta foi excluída com sucesso!");
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Login" }],
+      setFeedbackAlert({
+        visible: true,
+        title: "Conta excluída",
+        message: "Sua conta foi excluída com sucesso!",
       });
+
+      setTimeout(() => {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Login" }],
+        });
+      }, 1000);
     } catch (error: any) {
-      Alert.alert("Erro", error.message || "Erro inesperado");
+      setFeedbackAlert({
+        visible: true,
+        title: "Erro",
+        message: error.message || "Erro inesperado ao excluir conta.",
+      });
     }
   };
 
@@ -148,7 +173,7 @@ export default function UserProfileScreen({ navigation }: { navigation: any }) {
         </TouchableOpacity>
       </View>
 
-      {/* Alerta de Confirmação */}
+      {/* Alerta de Confirmação de Exclusão */}
       <CustomAlert
         visible={alertVisible}
         title="Confirmar exclusão"
@@ -156,6 +181,14 @@ export default function UserProfileScreen({ navigation }: { navigation: any }) {
         onClose={() => setAlertVisible(false)}
         onConfirm={confirmDelete}
         showCancel
+      />
+
+      {/* Alerta de Feedback (erro/sucesso) */}
+      <CustomAlert
+        visible={feedbackAlert.visible}
+        title={feedbackAlert.title}
+        message={feedbackAlert.message}
+        onClose={() => setFeedbackAlert({ ...feedbackAlert, visible: false })}
       />
     </SafeAreaView>
   );
