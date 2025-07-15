@@ -11,23 +11,25 @@ import ListDestinationScreen from "./screens/destination/List";
 import ListBusScreen from "./screens/bus/List";
 import ListUserScreen from "./screens/user/List";
 import UserProfileScreen from "./screens/UserProfileScreen";
-import ListCompanyScreen from "./screens/company/List";
+import { UserProvider } from "./contexts/UserContext";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="List">
-        <Stack.Screen name="List" component={ListScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="ListBus" component={ListBusScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="ListDestination" component={ListDestinationScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="SolicitarNovaSenha" component={Request_New_Password} />
-        <Stack.Screen name="NovaSenha" component={New_Password} />
-        <Stack.Screen name="ListUsers" component={ListUserScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="UserProfile" component={UserProfileScreen} options={{ headerShown: false }}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <UserProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="List">
+          <Stack.Screen name="List" component={ListScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ListBus" component={ListBusScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="ListDestination" component={ListDestinationScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="SolicitarNovaSenha" component={Request_New_Password} />
+          <Stack.Screen name="NovaSenha" component={New_Password} />
+          <Stack.Screen name="ListUsers" component={ListUserScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="UserProfile" component={UserProfileScreen} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </UserProvider>
   );
 }

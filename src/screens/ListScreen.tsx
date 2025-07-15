@@ -1,16 +1,18 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity,
-  FlatList, ActivityIndicator
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Picker } from '@react-native-picker/picker';
 
-import Sidebar from '../components/SidebarComponent';
+import AppLayout from '../components/AppLayout';
 import CustomAlert from '../components/alert';
 
-import UserService from '../services/services_user';
 import DestinationService from '../services/services_Destination';
 import PassengersListService from '../services/PassengersListService';
 import PassengerEntryService from '../services/PassengerEntryService';
@@ -23,11 +25,12 @@ import { SituationEnum } from '../models/SituationEnum';
 import { PassengerEntry } from '../models/PassengerEntry';
 import { UserAsPassenger } from '../models/UserAsPassenger';
 
-export default function SeridoBusApp({ navigation }: { navigation: any }) {
-  /* ---------- estados básicos ---------- */
-  const [currentUser, setCurrentUser] = useState<UserAsPassenger | null>(null);
-  const [menuVisible, setMenuVisible] = useState(false);
+import { UserContext } from '../contexts/UserContext';
 
+export default function ListScreen({ navigation }: { navigation: any }) {
+  const { currentUser, loading } = useContext(UserContext);
+
+  /* ---------- estados ---------- */
   const [destinos, setDestinos] = useState<Destination[]>([]);
   const [carregandoDest, setCarregando] = useState(true);
 
@@ -38,14 +41,12 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
   const [listaIda, setListaIda] = useState<number | null>(null);
   const [listaVolta, setListaVolta] = useState<number | null>(null);
 
-  /* ---------- alerts ---------- */
   const [dupAlertVisible, setDupAlertVisible] = useState(false);
   const [delAlert, setDelAlert] = useState<{ visible: boolean; entry: PassengerEntry | null }>({
     visible: false,
     entry: null,
   });
 
-  /* ---------- form ---------- */
   const [destId, setDestId] = useState<number | null>(null);
   const [acao, setAcao] = useState<'Ida' | 'Volta' | 'Ida e volta'>('Ida');
   const [name, setName] = useState('');
@@ -60,7 +61,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
     ? 'cadastrado'
     : 'carona';
 
-  /* ---------- helpers ---------- */
+  /* ---------- filtros e helpers ---------- */
   const listaAtiva = viewList === 'ida' ? entriesIda : entriesVolta;
 
   const filtrados = useMemo(() => {
@@ -79,18 +80,6 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
   const destinoNome = (id: number) => destinos.find((d) => d.id === id)?.name ?? '—';
 
   /* ---------- efeitos ---------- */
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const profile = await UserService.getCurrentUser();
-        setCurrentUser(profile);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    loadUser();
-  }, []);
-
   useEffect(() => {
     (async () => {
       try {
@@ -143,7 +132,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
     if (destinos.length) carregarListas();
   }, [carregarListas, destinos]);
 
-  /* ---------- salvar passageiro ---------- */
+  /* ---------- ações ---------- */
   const nameOrUser = () => (loggedIn ? userName : name.trim());
 
   const addToList = async (listId: number | null) => {
@@ -162,7 +151,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
     }
 
     if (loggedIn) {
-      await PassengersListUsersService.add(currentUser.id, listId);
+      await PassengersListUsersService.add(currentUser!.id, listId);
     }
   };
 
@@ -178,7 +167,6 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
     setViewList('ida');
   };
 
-  /* ---------- remover passageiro ---------- */
   const canDelete = (e: PassengerEntry) =>
     loggedIn && (currentUser?.adm_company || e.name === userName);
 
@@ -198,26 +186,16 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
     }
   };
 
-  /* ---------- UI ---------- */
-  return (
-    <SafeAreaView className="flex-1 bg-white">
-      <Sidebar
-        visible={menuVisible}
-        onClose={() => setMenuVisible(false)}
-        isAdmin={currentUser?.adm_company}
-      />
-
-      {/* header */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
-        <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons name="menu" size={28} color="black" />
-        </TouchableOpacity>
-        <Text className="text-xl font-bold text-black">SeridoBus</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
-          <Ionicons name="person-circle-outline" size={30} color="black" />
-        </TouchableOpacity>
+  if (loading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator size="large" color="black" />
       </View>
+    );
+  }
 
+  return (
+    <AppLayout title="SeridoBus" navigation={navigation}>
       <View className="p-4">
         {/* resumo */}
         {viewList !== 'add' && (
@@ -244,9 +222,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
             <TouchableOpacity
               key={k}
               onPress={() => setViewList(k)}
-              className={`px-3 py-2 rounded-xl bg-yellow-400 ${
-                viewList === k ? 'opacity-100' : 'opacity-70'
-              }`}
+              className={`px-3 py-2 rounded-xl bg-yellow-400 ${viewList === k ? 'opacity-100' : 'opacity-70'}`}
             >
               <Text className="font-bold text-black">
                 {k === 'add' ? 'Adicionar nome' : k === 'ida' ? 'Lista Ida' : 'Lista Volta'}
@@ -302,9 +278,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
                 <TouchableOpacity
                   key={op}
                   onPress={() => setAcao(op)}
-                  className={`flex-1 py-2 mx-1 rounded ${
-                    acao === op ? 'bg-yellow-400' : 'bg-gray-300'
-                  }`}
+                  className={`flex-1 py-2 mx-1 rounded ${acao === op ? 'bg-yellow-400' : 'bg-gray-300'}`}
                 >
                   <Text className="text-center font-bold">{op}</Text>
                 </TouchableOpacity>
@@ -329,9 +303,7 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
                 {['#', 'Nome', 'Destino', 'Situação', ''].map((h, i) => (
                   <Text
                     key={h}
-                    className={`${
-                      i === 0 ? 'w-[10%]' : i === 4 ? 'w-[10%]' : 'w-[25%]'
-                    } font-bold text-center`}
+                    className={`${i === 0 ? 'w-[10%]' : i === 4 ? 'w-[10%]' : 'w-[25%]'} font-bold text-center`}
                   >
                     {h}
                   </Text>
@@ -355,26 +327,26 @@ export default function SeridoBusApp({ navigation }: { navigation: any }) {
             ListEmptyComponent={<Text className="text-center text-gray-500">Nada na lista</Text>}
           />
         )}
+
+        {/* alert de nome duplicado */}
+        <CustomAlert
+          visible={dupAlertVisible}
+          title="Impossível adicionar nome"
+          message="Nome já adicionado a uma das listas."
+          onClose={() => setDupAlertVisible(false)}
+          onConfirm={() => setDupAlertVisible(false)}
+        />
+
+        {/* alert de confirmar delete */}
+        <CustomAlert
+          visible={delAlert.visible}
+          title="Remover passageiro"
+          message={`Remover "${delAlert.entry?.name}" da lista?`}
+          onClose={() => setDelAlert({ visible: false, entry: null })}
+          onConfirm={confirmRemove}
+          showCancel
+        />
       </View>
-
-      {/* alert de nome duplicado */}
-      <CustomAlert
-        visible={dupAlertVisible}
-        title="Impossível adicionar nome"
-        message="Nome já adicionado a uma das listas."
-        onClose={() => setDupAlertVisible(false)}
-        onConfirm={() => setDupAlertVisible(false)}
-      />
-
-      {/* alert de confirmar delete */}
-      <CustomAlert
-        visible={delAlert.visible}
-        title="Remover passageiro"
-        message={`Remover "${delAlert.entry?.name}" da lista?`}
-        onClose={() => setDelAlert({ visible: false, entry: null })}
-        onConfirm={confirmRemove}
-        showCancel
-      />
-    </SafeAreaView>
+    </AppLayout>
   );
 }
