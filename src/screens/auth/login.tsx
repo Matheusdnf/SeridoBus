@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { UserContext } from '../../contexts/UserContext';
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import tw from "twrnc";
@@ -29,6 +30,8 @@ export default function LoginScreen({ navigation }: any) {
   const [passwordEdited, setPasswordEdited] = useState<boolean>(false);
   const [imageLoadError, setImageLoadError] = useState<boolean>(false);
 
+  const { refreshUser } = useContext(UserContext);
+  
   const handleEmailValidation = (inputEmail: string) => {
     const isNotValid = validateEmail(inputEmail);
     setEmailError(isNotValid);
@@ -50,12 +53,13 @@ export default function LoginScreen({ navigation }: any) {
     if (isEmailValid && isPasswordValid) {
       try {
         // Chama o serviço de login
-        const user = {
+        const userCreds = {
           email,
           pin: password,
         };
 
-        const response = await AuthService.SignInWithEmail(user);
+        const response = await AuthService.SignInWithEmail(userCreds);
+        await refreshUser();
         console.log("Login response:", response);
 
         setGeneralMessage({

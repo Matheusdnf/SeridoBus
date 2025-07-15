@@ -25,7 +25,7 @@ export function UserProvider({ children }: Props) {
     const [currentUser, setCurrentUser] = useState<UserAsPassenger | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const loadUser = async () => {
+    const refreshUser = async () => {
         setLoading(true);
         try {
             const user = await UserService.getCurrentUser();
@@ -39,7 +39,7 @@ export function UserProvider({ children }: Props) {
     };
 
     useEffect(() => {
-        loadUser();
+        refreshUser();
     }, []);
 
     const logout = async () => {
@@ -51,7 +51,7 @@ export function UserProvider({ children }: Props) {
     };
 
     return (
-        <UserContext.Provider value={{ currentUser, loading, refreshUser: loadUser, logout }}>
+        <UserContext.Provider value={{ currentUser, loading, refreshUser, logout }}>
             {children}
         </UserContext.Provider>
     );
