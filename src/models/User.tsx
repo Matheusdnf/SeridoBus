@@ -5,7 +5,7 @@ export class User {
     public name: string,
     public email: string,
     public pin: string,
-    public company_id: number | null = null, // aceita número ou null, padrão null
+    public company_id: number | null = null,
     public adm_company: boolean = false,
     public create_company: boolean = false,
     public associate: boolean = false,

@@ -22,14 +22,14 @@ export default class UserService {
         new User(
           item.id,
           item.name,
-          item.auth?.email ?? "", // email do auth.users
-          "", // senha/pin nunca vem do back-end
+          item.auth?.email ?? "",
+          "",
           item.company_id,
           item.adm_company,
           item.create_company,
           item.associate,
           item.cellphone,
-          item.company?.name ?? "" // nome da empresa via join
+          item.company?.name ?? ""
         )
     );
   }
@@ -196,7 +196,7 @@ export default class UserService {
       data.company?.[0]?.name ?? ""
     );
   }
-  
+
   static async getUserProfile() {
     const {
       data: { user },
