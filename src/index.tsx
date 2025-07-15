@@ -12,12 +12,13 @@ import ListBusScreen from "./screens/bus/List";
 import ListUserScreen from "./screens/user/List";
 import UserProfileScreen from "./screens/UserProfileScreen";
 import { UserProvider } from "./contexts/UserContext";
+import { navRef } from './services/NavigationService';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <UserProvider>
-      <NavigationContainer>
+      <NavigationContainer ref={navRef}>
         <Stack.Navigator initialRouteName="List">
           <Stack.Screen name="List" component={ListScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />

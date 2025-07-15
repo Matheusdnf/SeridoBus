@@ -11,7 +11,10 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { UserAsPassenger } from '../models/UserAsPassenger';
+import { UserContext
 
+ } from '../contexts/UserContext';
 // Define seu tipo de rotas da stack aqui:
 type RootStackParamList = {
   Login: undefined;
@@ -30,12 +33,13 @@ const { width, height } = Dimensions.get('window');
 interface SidebarProps {
   visible: boolean;
   onClose: () => void;
-  isAdmin?: boolean;
+  currUser?: UserAsPassenger | null;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, isAdmin }) => {
+const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, currUser }) => {
   const slideAnim = useRef(new Animated.Value(-width)).current;
   const navigation = useNavigation<NavigationProps>();
+  const { logout } = React.useContext(UserContext);
   useEffect(() => {
     Animated.timing(slideAnim, {
       toValue: visible ? 0 : -width,
@@ -60,26 +64,46 @@ const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, isAdmin }) => {
           </View>
           <View style={styles.menuItems}>
             <Text style={styles.item} onPress={() => navigation.replace('List')}>Lista</Text>
-            {isAdmin && (
+            {currUser?.adm_company && (
               <>
                 <Text style={styles.item} onPress={() => navigation.replace('ListBus')}>Ônibus</Text>
                 <Text style={styles.item} onPress={() => navigation.replace('ListDestination')}>Destinos</Text>
                 <Text style={styles.item} onPress={() => navigation.replace('ListUsers')}>Usuários</Text>
               </>
             )}
-            <Text style={styles.item} onPress={() => navigation.replace('UserProfile')}>Perfil de usuário</Text>
+            {currUser && (
+              <Text style={styles.item} onPress={() => navigation.replace('UserProfile')}>Perfil de usuário</Text>
+            )}
             {/* <Text style={styles.item} onPress={() => navigation.replace('ListCompany')}>Companhias</Text> */}
           </View>
         </View>
 
         <View style={styles.logoutContainer}>
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={() => navigation.replace('Login')}
-          >
-            <Ionicons name="exit-outline" size={20} color="black" />
-            <Text style={styles.logoutText}>Sair</Text>
-          </TouchableOpacity>
+          {currUser ? (
+            /* usuário logado */
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={async () => {
+                await logout();
+                onClose(); 
+              }}
+            >
+              <Ionicons name="exit-outline" size={20} color="black" />
+              <Text style={styles.logoutText}>Sair</Text>
+            </TouchableOpacity>
+          ) : (
+            /* usuário deslogado → botão Login */
+            <TouchableOpacity
+              style={styles.logoutButton}
+              onPress={() => {
+                onClose(); 
+                navigation.navigate('Login');
+              }}
+            >
+              <Ionicons name="log-in-outline" size={20} color="black" />
+              <Text style={styles.logoutText}>Login</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </Animated.View>
     </Pressable>

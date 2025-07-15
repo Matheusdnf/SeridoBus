@@ -1,5 +1,6 @@
 import { supabase } from "../database/supabase";
 import { User } from "../models/User";
+import { resetTo } from '../services/NavigationService';
 
 export default class AuthService {
   static async SignUpWithEmail(user: User) {
@@ -89,8 +90,8 @@ export default class AuthService {
     return data;
   }
   // passa rota que ele precisa ir, onde ele se redirecionar
-  static async signOut(user: User, navigation: any) {
+  static async signOut(route: string) {
     const { error } = await supabase.auth.signOut({ scope: "local" });
-    navigation.replace(navigation);
+    resetTo(route);
   }
 }

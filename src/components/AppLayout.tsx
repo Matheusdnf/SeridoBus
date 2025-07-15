@@ -26,7 +26,7 @@ export default function AppLayout({ title, navigation, children }: Props) {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <Sidebar visible={menuVisible} onClose={() => setMenuVisible(false)} isAdmin={currentUser?.adm_company} />
+      <Sidebar visible={menuVisible} onClose={() => setMenuVisible(false)} currUser={currentUser} />
 
       {/* Header */}
       <View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
