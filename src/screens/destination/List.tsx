@@ -10,33 +10,25 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Sidebar from "../../components/SidebarComponent";
+
+import AppLayout from "../../components/AppLayout"; // importou layout
 import { Destination } from "../../models/Destination";
 import DestinationService from "../../services/services_Destination";
 import CustomAlert from "../../components/alert";
 
-export default function ListDestinationScreen({
-  navigation,
-}: {
-  navigation: any;
-}) {
-  const [menuVisible, setMenuVisible] = useState(false);
+export default function ListDestinationScreen({ navigation }: { navigation: any }) {
   const [data, setData] = useState<Destination[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [DestinationName, setDestinationName] = useState("");
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [editingDestination, setEditingDestination] =
-    useState<Destination | null>(null);
+  const [editingDestination, setEditingDestination] = useState<Destination | null>(null);
 
   // Estados do alerta
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertTitle, setAlertTitle] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
-  const [alertOnConfirm, setAlertOnConfirm] = useState<(() => void) | null>(
-    null
-  );
+  const [alertOnConfirm, setAlertOnConfirm] = useState<(() => void) | null>(null);
   const [alertShowCancel, setAlertShowCancel] = useState(false);
 
   const showAlert = (title: string, message: string) => {
@@ -148,26 +140,10 @@ export default function ListDestinationScreen({
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <Sidebar visible={menuVisible} onClose={() => setMenuVisible(false)} />
-
-<View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
-  <TouchableOpacity onPress={() => setMenuVisible(true)}>
-    <Ionicons name="menu" size={28} color="black" />
-  </TouchableOpacity>
-
-  <Text className="text-xl font-bold text-black">SeridoBus</Text>
-
-  <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
-    <Ionicons name="person-circle-outline" size={30} color="black" />
-  </TouchableOpacity>
-</View>
-
+    <AppLayout title="SeridoBus" navigation={navigation}>
       <View className="p-4 space-y-4">
         {/* Formulário */}
-        <Text className="text-lg font-bold text-black">
-          Cadastrar Destino
-        </Text>
+        <Text className="text-lg font-bold text-black">Cadastrar Destino</Text>
         <TextInput
           className="border border-black rounded-lg p-2"
           placeholder="Nome do destino"
@@ -191,9 +167,7 @@ export default function ListDestinationScreen({
             ListHeaderComponent={() => (
               <View className="flex-row border-b border-black bg-yellow-200 p-2">
                 <Text className="w-[10%] font-bold text-center">#</Text>
-                <Text className="w-[70%] font-bold text-center">
-                  Destino
-                </Text>
+                <Text className="w-[70%] font-bold text-center">Destino</Text>
                 <Text className="w-[20%] font-bold text-center">Ações</Text>
               </View>
             )}
@@ -224,9 +198,7 @@ export default function ListDestinationScreen({
       <Modal visible={editModalVisible} animationType="slide" transparent>
         <View className="flex-1 justify-center items-center bg-black/50">
           <View className="w-11/12 bg-white rounded-2xl p-6">
-            <Text className="text-xl font-bold mb-4 text-black">
-              Editar Destino
-            </Text>
+            <Text className="text-xl font-bold mb-4 text-black">Editar Destino</Text>
             <TextInput
               className="border border-black rounded-lg p-2 mb-4"
               placeholder="Destino"
@@ -260,6 +232,6 @@ export default function ListDestinationScreen({
         onConfirm={alertOnConfirm ?? undefined}
         showCancel={alertShowCancel}
       />
-    </SafeAreaView>
+    </AppLayout>
   );
 }
