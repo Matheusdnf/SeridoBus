@@ -1,6 +1,6 @@
 export class UserAsPassenger {
     constructor(
-        public id: number,
+        public id: string,
         public name: string,
         public email: string,
         public cellphone: string,
