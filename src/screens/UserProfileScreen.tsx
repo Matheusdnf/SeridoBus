@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Sidebar from "../components/SidebarComponent";
 import { Ionicons } from "@expo/vector-icons";
+
+import AppLayout from "../components/AppLayout";
 import CustomAlert from "../components/alert";
 import UserService from "../services/services_user";
 
 export default function UserProfileScreen({ navigation }: { navigation: any }) {
-  const [menuVisible, setMenuVisible] = useState(false);
   const [editing, setEditing] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
 
@@ -85,19 +84,7 @@ export default function UserProfileScreen({ navigation }: { navigation: any }) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <Sidebar visible={menuVisible} onClose={() => setMenuVisible(false)} />
-
-      <View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
-        <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons name="menu" size={28} color="black" />
-        </TouchableOpacity>
-        <Text className="text-xl font-bold text-black">SeridoBus</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("UserProfile")}>
-          <Ionicons name="person-circle-outline" size={30} color="black" />
-        </TouchableOpacity>
-      </View>
-
+    <AppLayout title="SeridoBus" navigation={navigation}>
       <View className="p-4">
         <View className="border border-black rounded-xl bg-yellow-100 p-4 mb-4">
           <Text className="text-lg font-bold mb-2 text-black">
@@ -190,6 +177,6 @@ export default function UserProfileScreen({ navigation }: { navigation: any }) {
         message={feedbackAlert.message}
         onClose={() => setFeedbackAlert({ ...feedbackAlert, visible: false })}
       />
-    </SafeAreaView>
+    </AppLayout>
   );
 }
