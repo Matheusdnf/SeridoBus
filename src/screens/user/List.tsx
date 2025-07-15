@@ -12,9 +12,8 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Sidebar from '../../components/SidebarComponent';
 
+import AppLayout from '../../components/AppLayout';  // import do layout
 import UserAdminService from '../../services/UserAdminService';
 import { SituationEnum } from '../../models/SituationEnum';
 import UserService from '../../services/services_user';
@@ -29,7 +28,6 @@ type UserItem = {
 
 export default function ListUserScreen({ navigation }: { navigation: any }) {
   /* ---------- estados ---------- */
-  const [menuVisible, setMenuVisible] = useState(false);
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -47,16 +45,16 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
 
   /* ---------- carregar usuário logado ---------- */
   useEffect(() => {
-      const loadUser = async () => {
-        try {
-          const profile = await UserService.getCurrentUser();
-          setCurrentUserId(profile.id);
-        } catch (e) {
-          console.error(e);
-        }
-      };
-      loadUser();
-    }, []);
+    const loadUser = async () => {
+      try {
+        const profile = await UserService.getCurrentUser();
+        setCurrentUserId(profile.id);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadUser();
+  }, []);
 
   /* ---------- carregar lista ---------- */
   async function fetchUsers() {
@@ -166,28 +164,17 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#FACC15" />
-      </SafeAreaView>
+      <AppLayout title="SeridoBus" navigation={navigation}>
+        <View className="flex-1 justify-center items-center">
+          <ActivityIndicator size="large" color="#FACC15" />
+        </View>
+      </AppLayout>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <Sidebar visible={menuVisible} onClose={() => setMenuVisible(false)} />
-
-      {/* header */}
-      <View className="flex-row items-center justify-between px-4 py-3 bg-yellow-400">
-        <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <Ionicons name="menu" size={28} color="black" />
-        </TouchableOpacity>
-        <Text className="text-xl font-bold text-black">SeridoBus</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
-          <Ionicons name="person-circle-outline" size={30} color="black" />
-        </TouchableOpacity>
-      </View>
-
-      {/* corpo */}
+    <AppLayout title="SeridoBus" navigation={navigation}>
+      {/* header search e lista */}
       <View className="p-4">
         <TextInput
           placeholder="Pesquisar por nome..."
@@ -313,6 +300,6 @@ export default function ListUserScreen({ navigation }: { navigation: any }) {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </AppLayout>
   );
 }
