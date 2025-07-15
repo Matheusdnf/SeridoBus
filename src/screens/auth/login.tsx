@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { UserContext } from '../../contexts/UserContext';
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import tw from "twrnc";
@@ -29,6 +30,8 @@ export default function LoginScreen({ navigation }: any) {
   const [passwordEdited, setPasswordEdited] = useState<boolean>(false);
   const [imageLoadError, setImageLoadError] = useState<boolean>(false);
 
+  const { refreshUser } = useContext(UserContext);
+  
   const handleEmailValidation = (inputEmail: string) => {
     const isNotValid = validateEmail(inputEmail);
     setEmailError(isNotValid);
@@ -50,12 +53,13 @@ export default function LoginScreen({ navigation }: any) {
     if (isEmailValid && isPasswordValid) {
       try {
         // Chama o serviço de login
-        const user = {
+        const userCreds = {
           email,
           pin: password,
         };
 
-        const response = await AuthService.SignInWithEmail(user);
+        const response = await AuthService.SignInWithEmail(userCreds);
+        await refreshUser();
         console.log("Login response:", response);
 
         setGeneralMessage({
@@ -109,18 +113,16 @@ export default function LoginScreen({ navigation }: any) {
 
           {generalMessage.text ? (
             <View
-              style={tw`p-3 mb-2 rounded ${
-                generalMessage.type === "success"
-                  ? "bg-green-100 border border-green-400"
-                  : "bg-red-100 border border-red-400"
-              }`}
+              style={tw`p-3 mb-2 rounded ${generalMessage.type === "success"
+                ? "bg-green-100 border border-green-400"
+                : "bg-red-100 border border-red-400"
+                }`}
             >
               <Text
-                style={tw`${
-                  generalMessage.type === "success"
-                    ? "text-green-700"
-                    : "text-red-700"
-                } font-semibold`}
+                style={tw`${generalMessage.type === "success"
+                  ? "text-green-700"
+                  : "text-red-700"
+                  } font-semibold`}
               >
                 {generalMessage.text}
               </Text>
@@ -139,11 +141,10 @@ export default function LoginScreen({ navigation }: any) {
               Email
             </Text>
             <View
-              style={tw`flex-row items-center border rounded-lg overflow-hidden ${
-                emailError
-                  ? "border-red-500"
-                  : "border-gray-300 focus-within:border-blue-500"
-              }`}
+              style={tw`flex-row items-center border rounded-lg overflow-hidden ${emailError
+                ? "border-red-500"
+                : "border-gray-300 focus-within:border-blue-500"
+                }`}
             >
               <View style={tw`p-3 bg-gray-100 border-r border-gray-300`}>
                 <Icon name="mail" size={20} color="#6B7280" />
@@ -186,11 +187,10 @@ export default function LoginScreen({ navigation }: any) {
               Senha
             </Text>
             <View
-              style={tw`flex-row items-center border rounded-lg overflow-hidden ${
-                passwordError
-                  ? "border-red-500"
-                  : "border-gray-300 focus-within:border-blue-500"
-              }`}
+              style={tw`flex-row items-center border rounded-lg overflow-hidden ${passwordError
+                ? "border-red-500"
+                : "border-gray-300 focus-within:border-blue-500"
+                }`}
             >
               <View style={tw`p-3 bg-gray-100 border-r border-gray-300`}>
                 <Icon name="lock" size={20} color="#6B7280" />
@@ -249,12 +249,20 @@ export default function LoginScreen({ navigation }: any) {
             </Text>
           </TouchableOpacity>
 
+
           {/* Login Button */}
           <TouchableOpacity
             style={tw`bg-yellow-400 py-2 rounded-lg w-full items-center justify-center shadow-md active:bg-yellow-500 mt-4`}
             onPress={handleLogin}
           >
             <Text style={tw`text-black text-lg font-bold`}>Entrar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.replace("List")}
+          >
+            <Text style={tw`text-yellow-600 text-base font-semibold`}>
+              Entrar como visitante
+            </Text>
           </TouchableOpacity>
 
           {/* Register Section */}

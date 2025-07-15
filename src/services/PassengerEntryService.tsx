@@ -7,12 +7,14 @@ export default class PassengerEntryService {
   static async add(entry: Omit<PassengerEntry, 'id' | 'created_at'>) {
     const { data, error } = await supabase
       .from('passengerentry')
-      .insert(entry)
-      .select()
-      .single();
+      .upsert(entry, {
+        onConflict: 'passengers_list_id,name',
+        ignoreDuplicates: true,
+      })
+      .select();
 
     if (error) throw error;
-    return data as PassengerEntry;
+    return data && data.length ? data[0] : null; 
   }
 
   /** Lista passageiros por passengers_list_id */

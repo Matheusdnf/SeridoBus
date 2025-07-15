@@ -2,7 +2,7 @@
 export class PassengersListUsers {
   constructor(
     public id: number,
-    public passengersList_id: number,
-    public user_id: number
+    public passengerslist_id: number,
+    public user_id: string
   ) {}
 }

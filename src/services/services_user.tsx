@@ -239,12 +239,12 @@ export default class UserService {
       .select("name, cellphone, adm_company, associate")
       .eq("id", user.id)
       .single();
-
     if (profileError) {
       throw new Error(profileError.message);
     }
 
     return {
+      id: user.id,
       name: profile.name || "",
       email: user.email || "",
       cellphone: profile.cellphone || "",
