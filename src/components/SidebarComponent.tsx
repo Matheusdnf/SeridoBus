@@ -12,9 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { UserAsPassenger } from '../models/UserAsPassenger';
-import { UserContext
-
- } from '../contexts/UserContext';
+import { useAuth } from '../contexts/AuthContext';
 // Define seu tipo de rotas da stack aqui:
 type RootStackParamList = {
   Login: undefined;
@@ -37,9 +35,11 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, currUser }) => {
+  
   const slideAnim = useRef(new Animated.Value(-width)).current;
   const navigation = useNavigation<NavigationProps>();
-  const { logout } = React.useContext(UserContext);
+  const { signOut } = useAuth();
+
   useEffect(() => {
     Animated.timing(slideAnim, {
       toValue: visible ? 0 : -width,
@@ -84,8 +84,8 @@ const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, currUser }) => {
             <TouchableOpacity
               style={styles.logoutButton}
               onPress={async () => {
-                await logout();
-                onClose(); 
+                await signOut();
+                onClose();
               }}
             >
               <Ionicons name="exit-outline" size={20} color="black" />
@@ -96,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({ visible, onClose, currUser }) => {
             <TouchableOpacity
               style={styles.logoutButton}
               onPress={() => {
-                onClose(); 
+                onClose();
                 navigation.navigate('Login');
               }}
             >

@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Sidebar from './SidebarComponent';
-import { UserContext } from '../contexts/UserContext';
+import { useAuth } from '../contexts/AuthContext';
 
 type Props = {
   title: string;
@@ -14,7 +14,7 @@ type Props = {
 
 export default function AppLayout({ title, navigation, children }: Props) {
   const [menuVisible, setMenuVisible] = useState(false);
-  const { currentUser, loading } = useContext(UserContext);
+  const { currentUser, loading } = useAuth();
 
   if (loading) {
     return (
