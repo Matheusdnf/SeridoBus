@@ -25,10 +25,10 @@ import { SituationEnum } from '../models/SituationEnum';
 import { PassengerEntry } from '../models/PassengerEntry';
 import { UserAsPassenger } from '../models/UserAsPassenger';
 
-import { UserContext } from '../contexts/UserContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function ListScreen({ navigation }: { navigation: any }) {
-  const { currentUser, loading } = useContext(UserContext);
+  const { currentUser, loading } = useAuth();
 
   /* ---------- estados ---------- */
   const [destinos, setDestinos] = useState<Destination[]>([]);

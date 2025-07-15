@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
-import { UserContext } from '../../contexts/UserContext';
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import tw from "twrnc";
 import AuthService from "../../services/services_login"; // Importa seu AuthService
+import { useAuth } from "../../contexts/AuthContext";
 
 import {
   validateEmail,
@@ -16,6 +16,8 @@ interface GeneralMessage {
 }
 
 export default function LoginScreen({ navigation }: any) {
+  const { signIn } = useAuth();
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -30,8 +32,6 @@ export default function LoginScreen({ navigation }: any) {
   const [passwordEdited, setPasswordEdited] = useState<boolean>(false);
   const [imageLoadError, setImageLoadError] = useState<boolean>(false);
 
-  const { refreshUser } = useContext(UserContext);
-  
   const handleEmailValidation = (inputEmail: string) => {
     const isNotValid = validateEmail(inputEmail);
     setEmailError(isNotValid);
@@ -58,8 +58,7 @@ export default function LoginScreen({ navigation }: any) {
           pin: password,
         };
 
-        const response = await AuthService.SignInWithEmail(userCreds);
-        await refreshUser();
+        const response = signIn(userCreds.email, userCreds.pin); // Atualiza o contexto de autenticação
         console.log("Login response:", response);
 
         setGeneralMessage({
@@ -67,8 +66,6 @@ export default function LoginScreen({ navigation }: any) {
           text: "Login bem-sucedido!",
         });
 
-        // Navega para tela principal (exemplo "List")
-        setTimeout(() => navigation.replace("List"), 1500);
       } catch (error: any) {
         console.error("Erro no login:", error);
         setGeneralMessage({
